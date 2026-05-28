@@ -22,6 +22,9 @@ public class FloorGenerator : MonoBehaviour
     // Should match the visual size of your room prefab
     public Vector2 roomWorldSize = new Vector2(18f, 10f);
 
+    [Header("References")]
+    public Minimap minimap;
+
     private static readonly Vector2Int[] Directions =
     {
         Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
@@ -47,6 +50,9 @@ public class FloorGenerator : MonoBehaviour
         // Only the starting room begins active
         foreach (var rc in roomMap.Values)
             rc.gameObject.SetActive(rc == startRoom);
+
+        if (minimap != null)
+            minimap.Initialize(roomMap.Values, startRoom);
 
         if (RoomTransitionManager.Instance != null)
             RoomTransitionManager.Instance.Initialize(startRoom);
@@ -180,7 +186,8 @@ public class FloorGenerator : MonoBehaviour
             go.name = $"Room_{gridPos.x}_{gridPos.y}_{type}";
 
             var rc = go.GetComponent<RoomController>();
-            rc.roomType = type;
+            rc.roomType     = type;
+            rc.gridPosition = gridPos;
             roomMap[gridPos] = rc;
             spawnedRooms.Add(rc);
         }

@@ -109,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
                 Vector2 dirToTarget = hit.transform.position - transform.position;
                 if (Vector2.Angle(boltDir, dirToTarget) > boltHalfAngle) continue;
 
-                // hit.GetComponent<IDamageable>()?.TakeDamage(damage);
+                hit.GetComponent<Enemy>()?.TakeDamage(damage);
             }
         }
 

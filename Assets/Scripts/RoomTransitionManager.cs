@@ -13,6 +13,7 @@ public class RoomTransitionManager : MonoBehaviour
     public RoomController startingRoom;
     public Camera mainCamera;
     public PlayerMovement playerMovement;
+    public Minimap minimap;
 
     public bool IsTransitioning { get; private set; }
 
@@ -90,6 +91,7 @@ public class RoomTransitionManager : MonoBehaviour
         currentRoom.gameObject.SetActive(false);
 
         currentRoom = targetRoom;
+        minimap?.EnterRoom(targetRoom);
         playerMovement.canMove = true;
         IsTransitioning = false;
     }

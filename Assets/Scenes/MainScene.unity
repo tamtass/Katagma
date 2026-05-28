@@ -739,6 +739,114 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &232753906
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 232753911}
+  - component: {fileID: 232753910}
+  - component: {fileID: 232753909}
+  - component: {fileID: 232753908}
+  - component: {fileID: 232753907}
+  m_Layer: 0
+  m_Name: Minimap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &232753907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232753906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 045ac0cbccfd993498ddc8fc819c2be7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Minimap
+  cellSize: 14
+  cellGap: 3
+  colorCurrent: {r: 1, g: 1, b: 1, a: 1}
+  colorDiscovered: {r: 0.55, g: 0.55, b: 0.55, a: 1}
+  colorAdjacent: {r: 0.3, g: 0.3, b: 0.3, a: 0.5}
+--- !u!114 &232753908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232753906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RectMask2D
+  m_Padding: {x: 0, y: 0, z: 0, w: 0}
+  m_Softness: {x: 0, y: 0}
+--- !u!114 &232753909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232753906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.59607846}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &232753910
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232753906}
+  m_CullTransparentMesh: 1
+--- !u!224 &232753911
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232753906}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1039888485}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 513, y: 255}
+  m_SizeDelta: {x: 120, y: 120}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &246816943
 GameObject:
   m_ObjectHideFlags: 0
@@ -975,6 +1083,7 @@ MonoBehaviour:
   startingRoom: {fileID: 0}
   mainCamera: {fileID: 434584808}
   playerMovement: {fileID: 208930151}
+  minimap: {fileID: 232753907}
 --- !u!1 &418783857
 GameObject:
   m_ObjectHideFlags: 0
@@ -2272,12 +2381,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FloorGenerator
   targetRoomCount: 15
   maxItemRooms: 2
-  maxNewRoomNeighbors: 2
+  maxNewRoomNeighbors: 1
   startingRoomPrefab: {fileID: 4268844599837157330, guid: 02b6735cefd7afe47bbf21c9a712735c, type: 3}
   normalRoomPrefab: {fileID: 4268844599837157330, guid: 02b6735cefd7afe47bbf21c9a712735c, type: 3}
   itemRoomPrefab: {fileID: 4268844599837157330, guid: 02b6735cefd7afe47bbf21c9a712735c, type: 3}
   bossRoomPrefab: {fileID: 4268844599837157330, guid: 02b6735cefd7afe47bbf21c9a712735c, type: 3}
   roomWorldSize: {x: 18, y: 10}
+  minimap: {fileID: 232753907}
 --- !u!4 &997029688
 Transform:
   m_ObjectHideFlags: 0
@@ -2549,6 +2659,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 33018894}
+  - {fileID: 232753911}
   m_Father: {fileID: 221305851}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

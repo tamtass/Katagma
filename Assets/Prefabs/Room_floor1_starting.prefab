@@ -1990,12 +1990,17 @@ MonoBehaviour:
   bottomWall: {fileID: 1940508302058181446}
   leftWall: {fileID: 1636028228794788143}
   rightWall: {fileID: 4434840047993188272}
-  enemies: []
   topSpawnPoint: {fileID: 8378568784913783959}
   bottomSpawnPoint: {fileID: 3513987917312868623}
   leftSpawnPoint: {fileID: 2605366626703427607}
   rightSpawnPoint: {fileID: 4744927968007628420}
+  enemyPrefabs:
+  - {fileID: 9183751629112550458, guid: 8786332a5b42cc548a6688128c64b128, type: 3}
+  minSpawnBudget: 3
+  maxSpawnBudget: 3
+  spawnAreaHalfExtents: {x: 7, y: 3.5}
   roomType: 0
+  gridPosition: {x: 0, y: 0}
 --- !u!1 &4340211378821518064
 GameObject:
   m_ObjectHideFlags: 0

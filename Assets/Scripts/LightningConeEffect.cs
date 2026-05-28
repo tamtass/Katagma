@@ -101,6 +101,7 @@ public class LightningConeEffect : MonoBehaviour
         flickerTimer -= Time.deltaTime;
         if (flickerTimer <= 0f)
         {
+            origin = transform.position;
             Regenerate();
             flickerTimer = flickerRate;
         }
