@@ -4,13 +4,20 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Stats")]
-    public float maxHealth = 100f;
-    public float health = 100f;
+    public float maxHealth     = 100f;
+    public float health        = 100f;
     public float movementSpeed = 5f;
-    public float attackSpeed = 2f;   // attacks per second
-    public float damage = 10f;
-    public float attackRange = 1.5f;
-    public int projectileCount = 5;
+    public float attackSpeed   = 2f;
+    public float damage        = 10f;
+    public float attackRange   = 1.5f;
+    public int   projectileCount = 5;
+
+    [Header("Sprites")]
+    public SpriteRenderer spriteRenderer;
+    public Sprite frontSprite;
+    public Sprite backSprite;
+    public Sprite leftSprite;
+    public Sprite rightSprite;
 
     [Header("Effects")]
     public LightningConeEffect lightningCone;
@@ -20,11 +27,14 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private float attackCooldown;
+    private float facingAngle = 0f; // degrees, used for attack direction
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.freezeRotation = true;
         health = maxHealth;
+        transform.rotation = Quaternion.identity;
     }
 
     public void TakeDamage(float amount)
@@ -38,6 +48,18 @@ public class PlayerMovement : MonoBehaviour
     {
         health = Mathf.Min(health + amount, maxHealth);
     }
+
+    public void UpgradeMaxHealth(float amount)
+    {
+        maxHealth += amount;
+        Heal(amount);
+    }
+
+    public void UpgradeMovementSpeed(float amount)   => movementSpeed   += amount;
+    public void UpgradeAttackSpeed(float amount)     => attackSpeed     += amount;
+    public void UpgradeDamage(float amount)          => damage          += amount;
+    public void UpgradeAttackRange(float amount)     => attackRange     += amount;
+    public void UpgradeProjectileCount(int amount)   => projectileCount += amount;
 
     void Die()
     {
@@ -78,7 +100,18 @@ public class PlayerMovement : MonoBehaviour
 
         if (dir.sqrMagnitude < 0.001f) return;
 
-        transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
+        if (Mathf.Abs(dir.x) >= Mathf.Abs(dir.y))
+        {
+            facingAngle = dir.x >= 0 ? 0f : 180f;
+            if (spriteRenderer != null)
+                spriteRenderer.sprite = dir.x >= 0 ? rightSprite : leftSprite;
+        }
+        else
+        {
+            facingAngle = dir.y >= 0 ? 90f : -90f;
+            if (spriteRenderer != null)
+                spriteRenderer.sprite = dir.y >= 0 ? backSprite : frontSprite;
+        }
     }
 
     void HandleAttack()
@@ -94,16 +127,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Attack()
     {
-        float coneHalfAngle = projectileCount * 9f / 2f;
-        const float boltHalfAngle = 4.5f; // each bolt covers half of its 9-degree slice
+        float coneHalfAngle  = projectileCount * 9f / 2f;
+        const float boltHalfAngle = 4.5f;
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
 
         for (int i = 0; i < projectileCount; i++)
         {
-            float t     = projectileCount > 1 ? (float)i / (projectileCount - 1) : 0.5f;
-            float angle = transform.eulerAngles.z + Mathf.Lerp(-coneHalfAngle, coneHalfAngle, t);
-            float rad   = angle * Mathf.Deg2Rad;
+            float t       = projectileCount > 1 ? (float)i / (projectileCount - 1) : 0.5f;
+            float angle   = facingAngle + Mathf.Lerp(-coneHalfAngle, coneHalfAngle, t);
+            float rad     = angle * Mathf.Deg2Rad;
             Vector2 boltDir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
 
             foreach (var hit in hits)
@@ -120,15 +153,16 @@ public class PlayerMovement : MonoBehaviour
         if (lightningCone != null)
         {
             lightningCone.coneAngle = projectileCount * 9f;
-            lightningCone.Play(transform.position, transform.eulerAngles.z, attackRange, projectileCount);
+            lightningCone.Play(transform.position, facingAngle, attackRange, projectileCount);
         }
     }
 
     void OnDrawGizmosSelected()
     {
         float halfAngle = projectileCount * 9f / 2f;
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, Quaternion.Euler(0f, 0f,  halfAngle) * transform.right * attackRange);
-        Gizmos.DrawRay(transform.position, Quaternion.Euler(0f, 0f, -halfAngle) * transform.right * attackRange);
+        Vector3 facing  = new(Mathf.Cos(facingAngle * Mathf.Deg2Rad), Mathf.Sin(facingAngle * Mathf.Deg2Rad));
+        Gizmos.color    = Color.red;
+        Gizmos.DrawRay(transform.position, Quaternion.Euler(0f, 0f,  halfAngle) * facing * attackRange);
+        Gizmos.DrawRay(transform.position, Quaternion.Euler(0f, 0f, -halfAngle) * facing * attackRange);
     }
 }

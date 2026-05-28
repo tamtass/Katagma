@@ -391,3 +391,6 @@ MonoBehaviour:
   spawnWeight: 0.5
   knockbackForce: 3
   knockbackDuration: 0.2
+  dropChance: 1
+  itemDropPool:
+  - {fileID: 4985415875749173232, guid: 9801708e2897bdf4dafcd0781c93a023, type: 3}

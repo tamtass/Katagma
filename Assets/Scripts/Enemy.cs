@@ -13,6 +13,11 @@ public class Enemy : MonoBehaviour
     public float knockbackForce    = 5f;
     public float knockbackDuration = 0.5f;
 
+    [Header("Item Drop")]
+    [Range(0f, 1f)]
+    public float dropChance = 0.25f;
+    public GameObject[] itemDropPool;
+
     protected Rigidbody2D rb;
     protected Transform player;
 
@@ -66,6 +71,17 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Die()
     {
+        TryDropItem();
         Destroy(gameObject);
+    }
+
+    void TryDropItem()
+    {
+        if (itemDropPool == null || itemDropPool.Length == 0) return;
+        if (Random.value > dropChance) return;
+
+        GameObject prefab = itemDropPool[Random.Range(0, itemDropPool.Length)];
+        if (prefab != null)
+            Instantiate(prefab, transform.position, Quaternion.identity, transform.parent);
     }
 }
