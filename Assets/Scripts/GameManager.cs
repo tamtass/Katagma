@@ -29,14 +29,42 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        if (TransitionScreen.Instance != null)
+            TransitionScreen.Instance.FadeFromBlack(1f);
+    }
+
     public void StartGame()
     {
-        mainMenuUI.SetActive(false);
-        gameSystem.SetActive(true);
-        pauseMenuUI.SetActive(false);
-        IsGameRunning = true;
-        floorGenerator.GenerateFloor();
-        playerPrefab.transform.position = Vector3.zero;
+        if (!playerPrefab.TryGetComponent<PlayerMovement>(out var pm))
+            return;
+
+        pm.canMove = false;
+
+        if (TransitionScreen.Instance != null)
+        {
+            TransitionScreen.Instance.ShowFloor(1,
+                onBlack: () =>
+                {
+                    mainMenuUI.SetActive(false);
+                    gameSystem.SetActive(true);
+                    pauseMenuUI.SetActive(false);
+                    IsGameRunning = true;
+                    floorGenerator.GenerateFloor();
+                    playerPrefab.transform.position = Vector3.zero;
+                },
+                onComplete: () => pm.canMove = true);
+        }
+        else
+        {
+            mainMenuUI.SetActive(false);
+            gameSystem.SetActive(true);
+            IsGameRunning = true;
+            floorGenerator.GenerateFloor();
+            playerPrefab.transform.position = Vector3.zero;
+            pm.canMove = true;
+        }
     }
 
     public void PauseGame()
@@ -55,6 +83,8 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         floorGenerator.ClearFloor();
+        if (TransitionScreen.Instance != null)
+            TransitionScreen.Instance.FadeFromBlack(1f);
         mainMenuUI.SetActive(true);
         gameSystem.SetActive(false);
         pauseMenuUI.SetActive(false);

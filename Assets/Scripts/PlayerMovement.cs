@@ -41,7 +41,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Die()
     {
-        // TODO: handle player death
+        canMove = false;
+        rb.linearVelocity = Vector2.zero;
+        Time.timeScale = 0f;
+        if (TransitionScreen.Instance != null)
+            TransitionScreen.Instance.ShowDeath();
     }
 
     void Update()

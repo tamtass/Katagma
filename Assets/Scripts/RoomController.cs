@@ -89,7 +89,7 @@ public class RoomController : MonoBehaviour
                 Random.Range(-spawnAreaHalfExtents.x, spawnAreaHalfExtents.x),
                 Random.Range(-spawnAreaHalfExtents.y, spawnAreaHalfExtents.y),
                 0f);
-            spawnedEnemies.Add(Instantiate(prefab, pos, Quaternion.identity));
+            spawnedEnemies.Add(Instantiate(prefab, pos, Quaternion.identity, transform));
 
             remaining -= weight;
             pool.RemoveAll(e => e.weight > remaining);
