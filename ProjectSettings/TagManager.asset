@@ -51,6 +51,9 @@ TagManager:
   - name: Walls
     uniqueID: 3156243599
     locked: 0
+  - name: Barrier
+    uniqueID: 2822469207
+    locked: 0
   - name: UI
     uniqueID: 1710603155
     locked: 0
