@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -20,13 +21,21 @@ public class Enemy : MonoBehaviour
 
     protected Rigidbody2D rb;
     protected Transform player;
+    protected SpriteRenderer spriteRenderer;
 
     private float knockbackTimer;
+    private float damageCooldown;
+    private Coroutine damageFlashCoroutine;
+    private Color originalColor;
+
+    private static readonly WaitForSeconds _flashDuration = new(0.05f);
 
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.freezeRotation = true;
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (spriteRenderer != null) originalColor = spriteRenderer.color;
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -41,32 +50,46 @@ public class Enemy : MonoBehaviour
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-        knockbackTimer -= Time.fixedDeltaTime;
+        knockbackTimer  -= Time.fixedDeltaTime;
+        damageCooldown  -= Time.fixedDeltaTime;
         if (knockbackTimer > 0f) return;
 
         rb.linearVelocity = dir * moveSpeed;
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (!collision.gameObject.CompareTag("Player")) return;
-        if (knockbackTimer > 0f) return;
+        if (!other.CompareTag("Player")) return;
+        if (damageCooldown > 0f) return;
 
-        PlayerMovement pm = collision.gameObject.GetComponent<PlayerMovement>();
-        if (pm != null)
-            pm.TakeDamage(damage);
+        if (other.TryGetComponent<PlayerMovement>(out var pm)) pm.TakeDamage(damage, transform.position);
 
-        Vector2 bounceDir = (transform.position - collision.transform.position).normalized;
+        Vector2 bounceDir = (transform.position - other.transform.position).normalized;
         rb.linearVelocity = Vector2.zero;
         rb.AddForce(bounceDir * knockbackForce, ForceMode2D.Impulse);
-        knockbackTimer = knockbackDuration;
+
+        damageCooldown  = knockbackDuration;
+        knockbackTimer  = knockbackDuration;
     }
 
     public virtual void TakeDamage(float amount)
     {
         health -= amount;
-        if (health <= 0f)
-            Die();
+        if (health <= 0f) { Die(); return; }
+
+        if (spriteRenderer != null)
+        {
+            if (damageFlashCoroutine != null) StopCoroutine(damageFlashCoroutine);
+            damageFlashCoroutine = StartCoroutine(DamageFlash());
+        }
+    }
+
+    private IEnumerator DamageFlash()
+    {
+        spriteRenderer.color = Color.red;
+        yield return _flashDuration;
+        spriteRenderer.color = originalColor;
+        damageFlashCoroutine = null;
     }
 
     protected virtual void Die()

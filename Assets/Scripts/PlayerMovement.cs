@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,24 +24,55 @@ public class PlayerMovement : MonoBehaviour
     [Header("Effects")]
     public LightningConeEffect lightningCone;
 
+    [Header("Upgrade UI")]
+    public GameObject upgradeCanvas;
+    // One text per stat: MaxHealth, MovementSpeed, AttackSpeed, Damage, AttackRange, ProjectileCount
+    public TextMeshProUGUI[] upgradeTexts;
+
+    [Header("Movement Feel")]
+    public float acceleration = 50f;
+    public float deceleration = 20f;
+
+    [Header("Knockback & Invulnerability")]
+    public float knockbackForce          = 8f;
+    public float invulnerabilityDuration = 1f;
+    public float flickerFrequency        = 10f;
+
     public bool canMove = true;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private float attackCooldown;
-    private float facingAngle = 0f; // degrees, used for attack direction
+    private float facingAngle = 0f;
+    private float invulnerabilityTimer;
+    private float knockbackTimer;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.freezeRotation = true;
+
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (lightningCone == null)
+            lightningCone = GetComponentInChildren<LightningConeEffect>();
+
         health = maxHealth;
         transform.rotation = Quaternion.identity;
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, Vector2 sourcePosition)
     {
+        if (invulnerabilityTimer > 0f) return;
+
         health = Mathf.Max(health - amount, 0f);
+
+        Vector2 knockDir = ((Vector2)transform.position - sourcePosition).normalized;
+        rb.AddForce(knockDir * knockbackForce, ForceMode2D.Impulse);
+
+        knockbackTimer       = 0.15f;
+        invulnerabilityTimer = invulnerabilityDuration;
+
         if (health == 0f)
             Die();
     }
@@ -60,6 +93,53 @@ public class PlayerMovement : MonoBehaviour
     public void UpgradeDamage(float amount)          => damage          += amount;
     public void UpgradeAttackRange(float amount)     => attackRange     += amount;
     public void UpgradeProjectileCount(int amount)   => projectileCount += amount;
+
+    public void OnRoomCleared()
+    {
+        int stat = Random.Range(0, 6);
+        switch (stat)
+        {
+            case 0: UpgradeMaxHealth(10f);                          break;
+            case 1: UpgradeMovementSpeed(movementSpeed * 0.1f);     break;
+            case 2: UpgradeAttackSpeed(attackSpeed   * 0.1f);       break;
+            case 3: UpgradeDamage(damage             * 0.1f);       break;
+            case 4: UpgradeAttackRange(attackRange   * 0.1f);       break;
+            case 5: UpgradeProjectileCount(1);                      break;
+        }
+
+        if (upgradeCanvas != null && upgradeTexts != null && stat < upgradeTexts.Length)
+            StartCoroutine(FlashUpgrade(stat));
+    }
+
+    private static readonly WaitForSeconds _waitShow  = new(0.6f);
+    private static readonly WaitForSeconds _waitOff   = new(0.08f);
+    private static readonly WaitForSeconds _waitOn    = new(0.08f);
+
+    private IEnumerator FlashUpgrade(int index)
+    {
+        if (upgradeTexts[index] == null) yield break;
+
+        upgradeCanvas.SetActive(true);
+
+        foreach (var t in upgradeTexts)
+            if (t != null) t.gameObject.SetActive(false);
+
+        TextMeshProUGUI text = upgradeTexts[index];
+        text.gameObject.SetActive(true);
+        text.alpha = 1f;
+
+        yield return _waitShow;
+
+        for (int i = 0; i < 4; i++)
+        {
+            text.alpha = 0f;
+            yield return _waitOff;
+            text.alpha = 1f;
+            yield return _waitOn;
+        }
+
+        upgradeCanvas.SetActive(false);
+    }
 
     void Die()
     {
@@ -82,13 +162,23 @@ public class PlayerMovement : MonoBehaviour
 
         moveInput = moveInput.normalized;
 
-        FaceCursor();
-        HandleAttack();
+        bool paused = GameManager.Instance != null && GameManager.Instance.IsPaused;
+        if (!paused)
+        {
+            FaceCursor();
+            HandleAttack();
+        }
+        HandleInvulnerability();
     }
 
     void FixedUpdate()
     {
-        rb.linearVelocity = canMove ? moveInput * movementSpeed : Vector2.zero;
+        knockbackTimer -= Time.fixedDeltaTime;
+        if (knockbackTimer > 0f) return;
+
+        Vector2 target = canMove ? moveInput * movementSpeed : Vector2.zero;
+        float rate = moveInput.sqrMagnitude > 0.01f ? acceleration : deceleration;
+        rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, target, rate * Time.fixedDeltaTime);
     }
 
     void FaceCursor()
@@ -122,6 +212,26 @@ public class PlayerMovement : MonoBehaviour
         {
             Attack();
             attackCooldown = 1f / attackSpeed;
+        }
+    }
+
+    void HandleInvulnerability()
+    {
+        if (invulnerabilityTimer <= 0f) return;
+
+        invulnerabilityTimer -= Time.deltaTime;
+
+        if (invulnerabilityTimer <= 0f)
+        {
+            invulnerabilityTimer = 0f;
+            if (spriteRenderer != null) spriteRenderer.color = Color.white;
+            return;
+        }
+
+        if (spriteRenderer != null)
+        {
+            bool dim = Mathf.FloorToInt(invulnerabilityTimer * flickerFrequency) % 2 == 0;
+            spriteRenderer.color = new Color(1f, 1f, 1f, dim ? 0.2f : 1f);
         }
     }
 

@@ -4,18 +4,19 @@ using TMPro;
 
 public class HealthBar : MonoBehaviour
 {
-    public PlayerMovement player;
     public RectTransform healthBarBase;
     public Image healthBarActual;
     public TextMeshProUGUI healthText;
 
+    private PlayerMovement player;
     private float baseWidth;
     private float baseMaxHealth;
     private float leftEdgeX;
-    private float leftBorder;   // Left offset  (offsetMin.x)
-    private float rightBorder;  // Right offset (-offsetMax.x)
+    private float leftBorder;
+    private float rightBorder;
+    private bool initialized;
 
-    void Start()
+    void Initialize()
     {
         baseWidth     = healthBarBase.sizeDelta.x;
         baseMaxHealth = player.maxHealth;
@@ -24,11 +25,18 @@ public class HealthBar : MonoBehaviour
         RectTransform actualRT = healthBarActual.rectTransform;
         leftBorder  =  actualRT.offsetMin.x;
         rightBorder = -actualRT.offsetMax.x;
+        initialized = true;
     }
 
     void Update()
     {
+        if (player == null)
+        {
+            player = FindFirstObjectByType<PlayerMovement>();
+            initialized = false;
+        }
         if (player == null || player.maxHealth <= 0f) return;
+        if (!initialized) Initialize();
 
         // Resize bar base, keeping the left edge fixed
         float newWidth = baseWidth * (player.maxHealth / baseMaxHealth);

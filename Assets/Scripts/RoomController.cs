@@ -130,6 +130,13 @@ public class RoomController : MonoBehaviour
     void ClearRoom()
     {
         isRoomCleared = true;
+
+        if (IsCombatRoom())
+        {
+            PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
+            if (player != null) player.OnRoomCleared();
+        }
+
         OpenDoors();
     }
 
