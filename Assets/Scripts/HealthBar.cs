@@ -8,23 +8,37 @@ public class HealthBar : MonoBehaviour
     public Image healthBarActual;
     public TextMeshProUGUI healthText;
 
+    public float slideSpeed = 80f;
+
     private PlayerMovement player;
     private float baseWidth;
     private float baseMaxHealth;
     private float leftEdgeX;
     private float leftBorder;
     private float rightBorder;
+    private float displayedHealth;
     private bool initialized;
 
-    void Initialize()
+    void Awake()
     {
-        baseWidth     = healthBarBase.sizeDelta.x;
-        baseMaxHealth = player.maxHealth;
-        leftEdgeX     = healthBarBase.anchoredPosition.x - baseWidth * healthBarBase.pivot.x;
+        baseWidth = healthBarBase.sizeDelta.x;
+        leftEdgeX = healthBarBase.anchoredPosition.x - baseWidth * healthBarBase.pivot.x;
 
         RectTransform actualRT = healthBarActual.rectTransform;
         leftBorder  =  actualRT.offsetMin.x;
         rightBorder = -actualRT.offsetMax.x;
+    }
+
+    void Initialize()
+    {
+        baseMaxHealth   = player.maxHealth;
+        displayedHealth = player.health;
+
+        healthBarBase.sizeDelta = new Vector2(baseWidth, healthBarBase.sizeDelta.y);
+        healthBarBase.anchoredPosition = new Vector2(
+            leftEdgeX + baseWidth * healthBarBase.pivot.x,
+            healthBarBase.anchoredPosition.y);
+
         initialized = true;
     }
 
@@ -48,13 +62,15 @@ public class HealthBar : MonoBehaviour
         // Move the right edge of the fill, preserving the border offsets
         // rightEdge = leftBorder + fillableWidth * ratio
         // offsetMax.x = rightEdge - newWidth
-        float ratio           = player.health / player.maxHealth;
+        displayedHealth = Mathf.MoveTowards(displayedHealth, player.health, slideSpeed * Time.deltaTime);
+
+        float ratio           = displayedHealth / player.maxHealth;
         float fillableWidth   = newWidth - leftBorder - rightBorder;
         RectTransform actualRT = healthBarActual.rectTransform;
         actualRT.offsetMax = new Vector2(
             leftBorder + fillableWidth * ratio - newWidth,
             actualRT.offsetMax.y);
 
-        healthText.text = $"{Mathf.CeilToInt(player.health)}/{Mathf.CeilToInt(player.maxHealth)}";
+        healthText.text = $"{Mathf.CeilToInt(displayedHealth)}";
     }
 }

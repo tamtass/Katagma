@@ -13,6 +13,9 @@ public class GameManager : MonoBehaviour
 
     public bool IsGameRunning { get { return _isGameRunning; } private set { _isGameRunning = value; } }
     public bool IsPaused { get; private set; }
+    public bool IsPlayerDead { get; private set; }
+
+    public void OnPlayerDied() => IsPlayerDead = true;
 
     private PlayerMovement playerInstance;
 
@@ -42,7 +45,7 @@ public class GameManager : MonoBehaviour
     {
         if (TransitionScreen.Instance != null)
         {
-            TransitionScreen.Instance.ShowFloor(1,
+            TransitionScreen.Instance.ShowFloor(
                 onBlack: () =>
                 {
                     mainMenuUI.SetActive(false);
@@ -67,6 +70,8 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayer()
     {
+        IsPlayerDead = false;
+
         if (playerInstance != null)
             Destroy(playerInstance.gameObject);
 
@@ -78,6 +83,7 @@ public class GameManager : MonoBehaviour
 
     public void PauseGame()
     {
+        if (IsPlayerDead) return;
         IsPaused = true;
         Time.timeScale = 0f;
         pauseMenuUI.SetActive(true);

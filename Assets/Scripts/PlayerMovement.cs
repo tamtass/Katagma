@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Knockback & Invulnerability")]
     public float knockbackForce          = 8f;
+    public float enemyKnockbackForce     = 6f;
     public float invulnerabilityDuration = 1f;
     public float flickerFrequency        = 10f;
 
@@ -146,6 +147,8 @@ public class PlayerMovement : MonoBehaviour
         canMove = false;
         rb.linearVelocity = Vector2.zero;
         Time.timeScale = 0f;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnPlayerDied();
         if (TransitionScreen.Instance != null)
             TransitionScreen.Instance.ShowDeath();
     }
@@ -265,6 +268,13 @@ public class PlayerMovement : MonoBehaviour
             lightningCone.coneAngle = projectileCount * 9f;
             lightningCone.Play(transform.position, facingAngle, attackRange, projectileCount);
         }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!collision.gameObject.TryGetComponent<Enemy>(out var enemy)) return;
+        Vector2 dir = (collision.transform.position - transform.position).normalized;
+        enemy.ApplyKnockback(dir, enemyKnockbackForce);
     }
 
     void OnDrawGizmosSelected()

@@ -49,10 +49,10 @@ public class TransitionScreen : MonoBehaviour
         StartCoroutine(Fade(1f, 0f, duration));
     }
 
-    // Show "FLOOR X" then call onComplete when fully faded out
-    public void ShowFloor(int floor, Action onBlack = null, Action onComplete = null)
+    // Show floor text then call onComplete when fully faded out
+    public void ShowFloor(Action onBlack = null, Action onComplete = null)
     {
-        StartCoroutine(FloorSequence(floor, onBlack, onComplete));
+        StartCoroutine(FloorSequence(onBlack, onComplete));
     }
 
     // Show FRACTURED death screen then return to menu
@@ -61,18 +61,14 @@ public class TransitionScreen : MonoBehaviour
         StartCoroutine(DeathSequence());
     }
 
-    IEnumerator FloorSequence(int floor, Action onBlack, Action onComplete)
+    IEnumerator FloorSequence(Action onBlack, Action onComplete)
     {
-        // Fade to black over whatever is currently showing (e.g. main menu)
         SetVisible(fracturedText, false);
         SetVisible(floorText, false);
         yield return Fade(0f, 1f, floorFadeIn);
 
-        // Screen is fully black — safe to swap UI and load the floor
         onBlack?.Invoke();
 
-        // Animate floor text in: fade alpha + grow scale simultaneously
-        if (floorText != null) floorText.text = $"FLOOR {floor}";
         yield return RevealText(floorText);
 
         yield return new WaitForSecondsRealtime(floorHold);

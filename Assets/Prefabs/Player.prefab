@@ -466,8 +466,9 @@ MonoBehaviour:
   acceleration: 50
   deceleration: 20
   knockbackForce: 8
-  invulnerabilityDuration: 1
-  flickerFrequency: 10
+  enemyKnockbackForce: 6
+  invulnerabilityDuration: 0.6
+  flickerFrequency: 20
   canMove: 1
 --- !u!58 &8387841228858831230
 CircleCollider2D:

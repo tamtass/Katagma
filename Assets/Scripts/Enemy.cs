@@ -14,6 +14,9 @@ public class Enemy : MonoBehaviour
     public float knockbackForce    = 5f;
     public float knockbackDuration = 0.5f;
 
+    [Header("Spawn")]
+    public float spawnStunDuration = 0.6f;
+
     [Header("Item Drop")]
     [Range(0f, 1f)]
     public float dropChance = 0.25f;
@@ -25,6 +28,7 @@ public class Enemy : MonoBehaviour
 
     private float knockbackTimer;
     private float damageCooldown;
+    private float spawnStunTimer;
     private Coroutine damageFlashCoroutine;
     private Color originalColor;
 
@@ -32,14 +36,30 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponentInChildren<Rigidbody2D>();
         rb.freezeRotation = true;
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         if (spriteRenderer != null) originalColor = spriteRenderer.color;
+        spawnStunTimer = spawnStunDuration;
+        transform.localScale = Vector3.zero;
+        StartCoroutine(SpawnScale());
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             player = playerObj.transform;
+    }
+
+    private IEnumerator SpawnScale()
+    {
+        float elapsed = 0f;
+        while (elapsed < spawnStunDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / spawnStunDuration);
+            transform.localScale = Vector3.one * t;
+            yield return null;
+        }
+        transform.localScale = Vector3.one;
     }
 
     protected virtual void FixedUpdate()
@@ -50,14 +70,15 @@ public class Enemy : MonoBehaviour
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
+        spawnStunTimer  -= Time.fixedDeltaTime;
         knockbackTimer  -= Time.fixedDeltaTime;
         damageCooldown  -= Time.fixedDeltaTime;
-        if (knockbackTimer > 0f) return;
+        if (spawnStunTimer > 0f || knockbackTimer > 0f) return;
 
         rb.linearVelocity = dir * moveSpeed;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerStay2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
         if (damageCooldown > 0f) return;
@@ -68,8 +89,15 @@ public class Enemy : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
         rb.AddForce(bounceDir * knockbackForce, ForceMode2D.Impulse);
 
-        damageCooldown  = knockbackDuration;
-        knockbackTimer  = knockbackDuration;
+        damageCooldown = knockbackDuration;
+        knockbackTimer = knockbackDuration;
+    }
+
+    public void ApplyKnockback(Vector2 direction, float force)
+    {
+        rb.linearVelocity = Vector2.zero;
+        rb.AddForce(direction * force, ForceMode2D.Impulse);
+        knockbackTimer = knockbackDuration;
     }
 
     public virtual void TakeDamage(float amount)

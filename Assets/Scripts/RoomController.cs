@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -32,15 +33,18 @@ public class RoomController : MonoBehaviour
     public GameObject[] enemyPrefabs;
     public float minSpawnBudget = 2f;
     public float maxSpawnBudget = 5f;
-    public Vector2 spawnAreaHalfExtents = new Vector2(7f, 3.5f);
+    public Vector2 spawnAreaHalfExtents = new(7f, 3.5f);
+    public float initialSpawnDelay = 0.4f;
+    public float spawnInterval     = 0.15f;
 
     [Header("Room Info")]
     public RoomType roomType = RoomType.Normal;
     [HideInInspector] public Vector2Int gridPosition;
 
-    private bool isInitialized = false;
-    private bool isRoomCleared = false;
-    private bool hasSpawned    = false;
+    private bool isInitialized   = false;
+    private bool isRoomCleared   = false;
+    private bool hasSpawned      = false;
+    private bool spawningComplete = false;
     private readonly List<GameObject> spawnedEnemies = new();
 
     void Start()
@@ -68,18 +72,23 @@ public class RoomController : MonoBehaviour
     void OnEnable()
     {
         if (!isInitialized || hasSpawned || !IsCombatRoom()) return;
-
         hasSpawned = true;
+        StartCoroutine(SpawnEnemies());
+    }
+
+    private IEnumerator SpawnEnemies()
+    {
         float remaining = Random.Range(minSpawnBudget, maxSpawnBudget);
 
-        // Build pool with cached weights; entries are removed when they no longer fit
         var pool = new List<(GameObject prefab, float weight)>();
         foreach (var prefab in enemyPrefabs)
         {
-            float w = Mathf.Max(prefab.GetComponent<Enemy>()?.spawnWeight ?? 1f, 0.01f);
+            float w = prefab.TryGetComponent<Enemy>(out var ec) ? Mathf.Max(ec.spawnWeight, 0.01f) : 1f;
             pool.Add((prefab, w));
         }
         pool.RemoveAll(e => e.weight > remaining);
+
+        yield return new WaitForSeconds(initialSpawnDelay);
 
         while (pool.Count > 0)
         {
@@ -94,11 +103,13 @@ public class RoomController : MonoBehaviour
             remaining -= weight;
             pool.RemoveAll(e => e.weight > remaining);
         }
+
+        spawningComplete = true;
     }
 
     void Update()
     {
-        if (isRoomCleared || !hasSpawned) return;
+        if (isRoomCleared || !spawningComplete) return;
 
         foreach (var e in spawnedEnemies)
             if (e != null) return;
@@ -116,14 +127,13 @@ public class RoomController : MonoBehaviour
     {
         if (adjacent != null)
         {
-            wall?.SetActive(false);
-            door?.gameObject.SetActive(true);
-            door?.CloseDoor();
+            if (wall != null) wall.SetActive(false);
+            if (door != null) { door.gameObject.SetActive(true); door.CloseDoor(); }
         }
         else
         {
-            wall?.SetActive(true);
-            door?.gameObject.SetActive(false);
+            if (wall != null) wall.SetActive(true);
+            if (door != null) door.gameObject.SetActive(false);
         }
     }
 
