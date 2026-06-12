@@ -61,6 +61,9 @@ public class RoomTransitionManager : MonoBehaviour
             yield break;
         }
 
+        // Tell the room which spawn point the player will enter from so enemies avoid it
+        targetRoom.SetEntryPoint(GetOppositeSpawn(direction, targetRoom));
+
         // Activate the target room before the pan so it's visible as the camera arrives
         targetRoom.gameObject.SetActive(true);
 

@@ -34,18 +34,22 @@ public class RoomController : MonoBehaviour
     public float minSpawnBudget = 2f;
     public float maxSpawnBudget = 5f;
     public Vector2 spawnAreaHalfExtents = new(7f, 3.5f);
-    public float initialSpawnDelay = 0.4f;
-    public float spawnInterval     = 0.15f;
+    public float initialSpawnDelay    = 0.4f;
+    public float spawnInterval        = 0.15f;
+    public float minDistanceFromEntry = 4f;
 
     [Header("Room Info")]
     public RoomType roomType = RoomType.Normal;
     [HideInInspector] public Vector2Int gridPosition;
 
-    private bool isInitialized   = false;
-    private bool isRoomCleared   = false;
-    private bool hasSpawned      = false;
+    private bool isInitialized    = false;
+    private bool isRoomCleared    = false;
+    private bool hasSpawned       = false;
     private bool spawningComplete = false;
+    private Transform entrySpawnPoint;
     private readonly List<GameObject> spawnedEnemies = new();
+
+    public void SetEntryPoint(Transform spawnPoint) => entrySpawnPoint = spawnPoint;
 
     void Start()
     {
@@ -94,10 +98,20 @@ public class RoomController : MonoBehaviour
         {
             var (prefab, weight) = pool[Random.Range(0, pool.Count)];
 
-            Vector3 pos = transform.position + new Vector3(
-                Random.Range(-spawnAreaHalfExtents.x, spawnAreaHalfExtents.x),
-                Random.Range(-spawnAreaHalfExtents.y, spawnAreaHalfExtents.y),
-                0f);
+            Vector3 pos;
+            int attempts = 0;
+            do
+            {
+                pos = transform.position + new Vector3(
+                    Random.Range(-spawnAreaHalfExtents.x, spawnAreaHalfExtents.x),
+                    Random.Range(-spawnAreaHalfExtents.y, spawnAreaHalfExtents.y),
+                    0f);
+                attempts++;
+            }
+            while (entrySpawnPoint != null
+                && Vector2.Distance(pos, entrySpawnPoint.position) < minDistanceFromEntry
+                && attempts < 10);
+
             spawnedEnemies.Add(Instantiate(prefab, pos, Quaternion.identity, transform));
 
             remaining -= weight;

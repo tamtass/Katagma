@@ -457,7 +457,6 @@ MonoBehaviour:
   lightningCone: {fileID: 2377347596234171655}
   upgradeCanvas: {fileID: 7043518832995707470}
   upgradeTexts:
-  - {fileID: 6086858347230890135}
   - {fileID: 2920358071272435502}
   - {fileID: 5522733640278441898}
   - {fileID: 7416930807003863309}

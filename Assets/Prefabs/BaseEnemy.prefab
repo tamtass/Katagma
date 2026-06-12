@@ -356,7 +356,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   health: 50
   damage: 10
-  moveSpeed: 3
+  moveSpeed: 5
   spawnWeight: 0.5
   knockbackForce: 3
   knockbackDuration: 0.2
@@ -426,4 +426,4 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.17
+  m_Radius: 0.23

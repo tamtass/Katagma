@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -97,15 +98,14 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnRoomCleared()
     {
-        int stat = Random.Range(0, 6);
+        int stat = Random.Range(0, 5);
         switch (stat)
         {
-            case 0: UpgradeMaxHealth(10f);                          break;
-            case 1: UpgradeMovementSpeed(movementSpeed * 0.1f);     break;
-            case 2: UpgradeAttackSpeed(attackSpeed   * 0.1f);       break;
-            case 3: UpgradeDamage(damage             * 0.1f);       break;
-            case 4: UpgradeAttackRange(attackRange   * 0.1f);       break;
-            case 5: UpgradeProjectileCount(1);                      break;
+            case 0: UpgradeMovementSpeed(movementSpeed * 0.1f);     break;
+            case 1: UpgradeAttackSpeed(attackSpeed   * 0.1f);       break;
+            case 2: UpgradeDamage(damage             * 0.1f);       break;
+            case 3: UpgradeAttackRange(attackRange   * 0.1f);       break;
+            case 4: UpgradeProjectileCount(1);                      break;
         }
 
         if (upgradeCanvas != null && upgradeTexts != null && stat < upgradeTexts.Length)
@@ -240,28 +240,41 @@ public class PlayerMovement : MonoBehaviour
 
     void Attack()
     {
-        float coneHalfAngle  = projectileCount * 9f / 2f;
-        const float boltHalfAngle = 4.5f;
+        float coneHalfAngle = projectileCount * 9f / 2f;
+        Vector2 facingDir = new(Mathf.Cos(facingAngle * Mathf.Deg2Rad), Mathf.Sin(facingAngle * Mathf.Deg2Rad));
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange);
+        var enemyHits = new Dictionary<Enemy, int>();
 
-        for (int i = 0; i < projectileCount; i++)
+        foreach (var hit in hits)
         {
-            float t       = projectileCount > 1 ? (float)i / (projectileCount - 1) : 0.5f;
-            float angle   = facingAngle + Mathf.Lerp(-coneHalfAngle, coneHalfAngle, t);
-            float rad     = angle * Mathf.Deg2Rad;
-            Vector2 boltDir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
+            if (hit.gameObject == gameObject) continue;
+            if (!hit.TryGetComponent<Enemy>(out var enemy)) continue;
+            if (enemyHits.ContainsKey(enemy)) continue;
 
-            foreach (var hit in hits)
+            Vector2 dirToTarget = (Vector2)hit.transform.position - (Vector2)transform.position;
+            if (Vector2.Angle(facingDir, dirToTarget) > coneHalfAngle) continue;
+
+            // Treat each bolt as a ray; count how many rays pass through the enemy's collider.
+            // 2D cross product |P × D| = perpendicular distance from enemy center to the ray.
+            float enemyRadius = Mathf.Max(hit.bounds.extents.x, hit.bounds.extents.y);
+
+            int boltHits = 0;
+            for (int i = 0; i < projectileCount; i++)
             {
-                if (hit.gameObject == gameObject) continue;
-
-                Vector2 dirToTarget = hit.transform.position - transform.position;
-                if (Vector2.Angle(boltDir, dirToTarget) > boltHalfAngle) continue;
-
-                hit.GetComponent<Enemy>()?.TakeDamage(damage);
+                float t       = projectileCount > 1 ? (float)i / (projectileCount - 1) : 0.5f;
+                float boltRad = (facingAngle + Mathf.Lerp(-coneHalfAngle, coneHalfAngle, t)) * Mathf.Deg2Rad;
+                Vector2 boltDir = new(Mathf.Cos(boltRad), Mathf.Sin(boltRad));
+                float perpDist = Mathf.Abs(dirToTarget.x * boltDir.y - dirToTarget.y * boltDir.x);
+                if (perpDist <= enemyRadius)
+                    boltHits++;
             }
+
+            enemyHits[enemy] = Mathf.Max(boltHits, 1);
         }
+
+        foreach (var kvp in enemyHits)
+            kvp.Key.TakeDamage(damage * kvp.Value);
 
         if (lightningCone != null)
         {
