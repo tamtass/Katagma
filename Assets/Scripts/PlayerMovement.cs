@@ -39,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
     public float enemyKnockbackForce     = 6f;
     public float invulnerabilityDuration = 1f;
     public float flickerFrequency        = 10f;
+    public float pickupFlickerFrequency  = 3f;
 
     public bool canMove = true;
 
@@ -48,6 +49,7 @@ public class PlayerMovement : MonoBehaviour
     private float facingAngle = 0f;
     private float invulnerabilityTimer;
     private float knockbackTimer;
+    private bool  _pickupFrozen;
 
     void Start()
     {
@@ -146,11 +148,8 @@ public class PlayerMovement : MonoBehaviour
     {
         canMove = false;
         rb.linearVelocity = Vector2.zero;
-        Time.timeScale = 0f;
         if (GameManager.Instance != null)
-            GameManager.Instance.OnPlayerDied();
-        if (TransitionScreen.Instance != null)
-            TransitionScreen.Instance.ShowDeath();
+            GameManager.Instance.ShowGameOver(false);
     }
 
     void Update()
@@ -218,8 +217,29 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void FreezeForPickup(float duration) => StartCoroutine(PickupFreezeCoroutine(duration));
+
+    private IEnumerator PickupFreezeCoroutine(float duration)
+    {
+        _pickupFrozen = true;
+        canMove = false;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            bool white = Mathf.FloorToInt(elapsed * pickupFlickerFrequency) % 2 == 0;
+            if (spriteRenderer != null)
+                spriteRenderer.color = white ? Color.white : Color.black;
+            yield return null;
+        }
+        if (spriteRenderer != null) spriteRenderer.color = Color.white;
+        canMove = true;
+        _pickupFrozen = false;
+    }
+
     void HandleInvulnerability()
     {
+        if (_pickupFrozen) return;
         if (invulnerabilityTimer <= 0f) return;
 
         invulnerabilityTimer -= Time.deltaTime;

@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     public float damage      = 10f;
     public float moveSpeed   = 3f;
     public float spawnWeight = 1f;
+    public int   scoreValue  = 10;
 
     [Header("Knockback")]
     public float knockbackForce    = 5f;
@@ -122,6 +123,11 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Die()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddScore(scoreValue);
+            GameManager.Instance.OnEnemyKilled();
+        }
         TryDropItem();
         Destroy(gameObject);
     }

@@ -2,6 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[System.Serializable]
+public class FloorConfig
+{
+    public GameObject startingRoomPrefab;
+    public GameObject normalRoomPrefab;
+    public GameObject itemRoomPrefab;
+    public GameObject bossRoomPrefab;
+}
+
 public class FloorGenerator : MonoBehaviour
 {
     [Header("Layout Settings")]
@@ -12,18 +21,16 @@ public class FloorGenerator : MonoBehaviour
     [Range(1, 3)]
     public int maxNewRoomNeighbors = 1;
 
-    [Header("Room Prefabs")]
-    public GameObject startingRoomPrefab;
-    public GameObject normalRoomPrefab;
-    public GameObject itemRoomPrefab;   // falls back to normalRoomPrefab if null
-    public GameObject bossRoomPrefab;   // falls back to normalRoomPrefab if null
+    [Header("Floors")]
+    public FloorConfig[] floors;
 
     [Header("World Settings")]
-    // Should match the visual size of your room prefab
     public Vector2 roomWorldSize = new Vector2(18f, 10f);
 
     [Header("References")]
     public Minimap minimap;
+
+    public int FloorCount => floors != null ? floors.Length : 0;
 
     private static readonly Vector2Int[] Directions =
     {
@@ -31,12 +38,14 @@ public class FloorGenerator : MonoBehaviour
     };
 
     private readonly List<RoomController> spawnedRooms = new();
+    private FloorConfig _currentFloor;
 
     // -------------------------------------------------------------------------
 
-    public void GenerateFloor()
+    public void GenerateFloor(int floorIndex)
     {
         ClearFloor();
+        _currentFloor = floors[Mathf.Clamp(floorIndex, 0, floors.Length - 1)];
 
         Dictionary<Vector2Int, RoomType> layout = BuildLayout();
         Dictionary<Vector2Int, RoomController> roomMap = InstantiateRooms(layout);
@@ -47,7 +56,6 @@ public class FloorGenerator : MonoBehaviour
 
         RoomController startRoom = roomMap[Vector2Int.zero];
 
-        // Only the starting room begins active
         foreach (var rc in roomMap.Values)
             rc.gameObject.SetActive(rc == startRoom);
 
@@ -78,19 +86,14 @@ public class FloorGenerator : MonoBehaviour
 
         while (positions.Count < targetRoomCount && attempts++ < safetyLimit)
         {
-            // Prefer dead ends (fewer neighbors) so branches stay long before splitting.
-            // Add a small random tiebreak so we don't always pick the exact same room.
             Vector2Int source = positionList
                 .OrderBy(p => CountNeighbors(p, positions) + Random.value * 0.49f)
                 .First();
 
-            // Try directions in random order
             foreach (var dir in Directions.OrderBy(_ => Random.value))
             {
                 Vector2Int candidate = source + dir;
 
-                // Only place a room if it would touch at most maxNewRoomNeighbors
-                // existing rooms (including the source we are expanding from).
                 if (!positions.Contains(candidate) &&
                     CountNeighbors(candidate, positions) <= maxNewRoomNeighbors)
                 {
@@ -109,18 +112,12 @@ public class FloorGenerator : MonoBehaviour
 
     private Dictionary<Vector2Int, RoomType> AssignTypes(HashSet<Vector2Int> positions)
     {
-        // Build adjacency counts
         var neighborCount = new Dictionary<Vector2Int, int>();
         foreach (var pos in positions)
-        {
-            int count = Directions.Count(d => positions.Contains(pos + d));
-            neighborCount[pos] = count;
-        }
+            neighborCount[pos] = Directions.Count(d => positions.Contains(pos + d));
 
-        // BFS distances from start
         var dist = BfsDistances(Vector2Int.zero, positions);
 
-        // Dead ends: exactly 1 neighbor, not the starting room
         var deadEnds = positions
             .Where(p => p != Vector2Int.zero && neighborCount[p] == 1)
             .OrderByDescending(p => dist[p])
@@ -129,18 +126,24 @@ public class FloorGenerator : MonoBehaviour
         var result = new Dictionary<Vector2Int, RoomType>();
         result[Vector2Int.zero] = RoomType.Starting;
 
-        // Boss = farthest dead end from start
-        if (deadEnds.Count > 0)
+        // Boss = always the farthest non-starting room, dead end or not
+        Vector2Int bossPos = positions
+            .Where(p => p != Vector2Int.zero)
+            .OrderByDescending(p => dist.GetValueOrDefault(p, 0))
+            .First();
+        result[bossPos] = RoomType.Boss;
+        deadEnds.Remove(bossPos);
+
+        // Item rooms = farthest unassigned rooms from the boss room
+        var distFromBoss = BfsDistances(bossPos, positions);
+        foreach (var pos in positions
+            .Where(p => !result.ContainsKey(p))
+            .OrderByDescending(p => distFromBoss.GetValueOrDefault(p, 0))
+            .Take(maxItemRooms))
         {
-            result[deadEnds[0]] = RoomType.Boss;
-            deadEnds.RemoveAt(0);
+            result[pos] = RoomType.Item;
         }
 
-        // Item rooms = next dead ends up to maxItemRooms
-        for (int i = 0; i < Mathf.Min(maxItemRooms, deadEnds.Count); i++)
-            result[deadEnds[i]] = RoomType.Item;
-
-        // Everything else = Normal
         foreach (var pos in positions)
             if (!result.ContainsKey(pos))
                 result[pos] = RoomType.Normal;
@@ -199,18 +202,18 @@ public class FloorGenerator : MonoBehaviour
     {
         foreach (var (pos, rc) in roomMap)
         {
-            if (roomMap.TryGetValue(pos + Vector2Int.up,    out var top))    rc.topRoom    = top.gameObject;
-            if (roomMap.TryGetValue(pos + Vector2Int.down,  out var bot))    rc.bottomRoom = bot.gameObject;
-            if (roomMap.TryGetValue(pos + Vector2Int.left,  out var left))   rc.leftRoom   = left.gameObject;
-            if (roomMap.TryGetValue(pos + Vector2Int.right, out var right))  rc.rightRoom  = right.gameObject;
+            if (roomMap.TryGetValue(pos + Vector2Int.up,    out var top))   rc.topRoom    = top.gameObject;
+            if (roomMap.TryGetValue(pos + Vector2Int.down,  out var bot))   rc.bottomRoom = bot.gameObject;
+            if (roomMap.TryGetValue(pos + Vector2Int.left,  out var left))  rc.leftRoom   = left.gameObject;
+            if (roomMap.TryGetValue(pos + Vector2Int.right, out var right)) rc.rightRoom  = right.gameObject;
         }
     }
 
     private GameObject PrefabFor(RoomType type) => type switch
     {
-        RoomType.Starting => startingRoomPrefab != null ? startingRoomPrefab : normalRoomPrefab,
-        RoomType.Item     => itemRoomPrefab     != null ? itemRoomPrefab     : normalRoomPrefab,
-        RoomType.Boss     => bossRoomPrefab     != null ? bossRoomPrefab     : normalRoomPrefab,
-        _                 => normalRoomPrefab
+        RoomType.Starting => _currentFloor.startingRoomPrefab != null ? _currentFloor.startingRoomPrefab : _currentFloor.normalRoomPrefab,
+        RoomType.Item     => _currentFloor.itemRoomPrefab     != null ? _currentFloor.itemRoomPrefab     : _currentFloor.normalRoomPrefab,
+        RoomType.Boss     => _currentFloor.bossRoomPrefab     != null ? _currentFloor.bossRoomPrefab     : _currentFloor.normalRoomPrefab,
+        _                 => _currentFloor.normalRoomPrefab
     };
 }

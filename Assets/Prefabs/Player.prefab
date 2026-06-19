@@ -444,11 +444,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   maxHealth: 50
   health: 50
-  movementSpeed: 5
-  attackSpeed: 2
-  damage: 10
-  attackRange: 3
-  projectileCount: 3
+  movementSpeed: 7
+  attackSpeed: 8
+  damage: 100
+  attackRange: 7
+  projectileCount: 6
   spriteRenderer: {fileID: 4345495092549718667}
   frontSprite: {fileID: 2099384810065395903, guid: 21347e525512acd4c8a8c4aecb48e2f5, type: 3}
   backSprite: {fileID: 1911844830866190439, guid: 21347e525512acd4c8a8c4aecb48e2f5, type: 3}
@@ -468,6 +468,7 @@ MonoBehaviour:
   enemyKnockbackForce: 6
   invulnerabilityDuration: 0.6
   flickerFrequency: 20
+  pickupFlickerFrequency: 4
   canMove: 1
 --- !u!58 &8387841228858831230
 CircleCollider2D:

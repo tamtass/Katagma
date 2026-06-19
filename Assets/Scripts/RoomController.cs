@@ -28,6 +28,7 @@ public class RoomController : MonoBehaviour
     public Transform bottomSpawnPoint;
     public Transform leftSpawnPoint;
     public Transform rightSpawnPoint;
+    public Transform itemSpawnPoint;
 
     [Header("Enemy Spawning")]
     public GameObject[] enemyPrefabs;
@@ -37,6 +38,12 @@ public class RoomController : MonoBehaviour
     public float initialSpawnDelay    = 0.4f;
     public float spawnInterval        = 0.15f;
     public float minDistanceFromEntry = 4f;
+
+    [Header("Boss Spawning")]
+    public GameObject[] bossPrefabs;
+    public GameObject exitDoor;
+    public float exitDoorDelay          = 1.5f;
+    public float exitDoorRevealDuration = 0.5f;
 
     [Header("Room Info")]
     public RoomType roomType = RoomType.Normal;
@@ -67,17 +74,18 @@ public class RoomController : MonoBehaviour
         SetupSide(leftRoom,   leftWall,   leftDoor);
         SetupSide(rightRoom,  rightWall,  rightDoor);
 
-        // Non-combat rooms open doors immediately
-        if (!IsCombatRoom())
+        // Item rooms wait for first entry to spawn their item
+        if (!IsCombatRoom() && !IsBossRoom() && roomType != RoomType.Item)
             ClearRoom();
     }
 
-    // Fires each time the room is activated — spawn enemies on first entry only
+    // Fires each time the room is activated — spawn on first entry only
     void OnEnable()
     {
-        if (!isInitialized || hasSpawned || !IsCombatRoom()) return;
-        hasSpawned = true;
-        StartCoroutine(SpawnEnemies());
+        if (!isInitialized || hasSpawned) return;
+        if (IsCombatRoom())             { hasSpawned = true; StartCoroutine(SpawnEnemies()); }
+        else if (IsBossRoom())          { hasSpawned = true; StartCoroutine(SpawnBoss()); }
+        else if (roomType == RoomType.Item) { hasSpawned = true; SpawnItem(); }
     }
 
     private IEnumerator SpawnEnemies()
@@ -121,6 +129,46 @@ public class RoomController : MonoBehaviour
         spawningComplete = true;
     }
 
+    private IEnumerator SpawnBoss()
+    {
+        yield return new WaitForSeconds(initialSpawnDelay);
+        GameObject prefab = bossPrefabs[Random.Range(0, bossPrefabs.Length)];
+        spawnedEnemies.Add(Instantiate(prefab, transform.position, Quaternion.identity, transform));
+        spawningComplete = true;
+    }
+
+    private void SpawnItem()
+    {
+        if (GameManager.Instance != null && itemSpawnPoint != null)
+        {
+            GameObject prefab = GameManager.Instance.TakeRandomItem();
+            if (prefab != null)
+                Instantiate(prefab, itemSpawnPoint.position, Quaternion.identity, transform);
+        }
+        ClearRoom();
+    }
+
+    private IEnumerator RevealExitDoor()
+    {
+        yield return new WaitForSeconds(exitDoorDelay);
+
+        exitDoor.SetActive(true);
+        Vector3 scale = exitDoor.transform.localScale;
+        exitDoor.transform.localScale = new Vector3(0f, scale.y, scale.z);
+
+        float elapsed = 0f;
+        while (elapsed < exitDoorRevealDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, elapsed / exitDoorRevealDuration);
+            scale = exitDoor.transform.localScale;
+            exitDoor.transform.localScale = new Vector3(t, scale.y, scale.z);
+            yield return null;
+        }
+
+        exitDoor.transform.localScale = new Vector3(1f, exitDoor.transform.localScale.y, exitDoor.transform.localScale.z);
+    }
+
     void Update()
     {
         if (isRoomCleared || !spawningComplete) return;
@@ -136,6 +184,11 @@ public class RoomController : MonoBehaviour
         && enemyPrefabs != null
         && enemyPrefabs.Length > 0
         && maxSpawnBudget > 0f;
+
+    bool IsBossRoom() =>
+        roomType == RoomType.Boss
+        && bossPrefabs != null
+        && bossPrefabs.Length > 0;
 
     void SetupSide(GameObject adjacent, GameObject wall, Door door)
     {
@@ -155,12 +208,19 @@ public class RoomController : MonoBehaviour
     {
         isRoomCleared = true;
 
-        if (IsCombatRoom())
+        if (IsCombatRoom() || IsBossRoom())
         {
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(100);
+                GameManager.Instance.OnCombatRoomCleared();
+            }
             PlayerMovement player = FindFirstObjectByType<PlayerMovement>();
             if (player != null) player.OnRoomCleared();
         }
 
+        if (IsBossRoom() && exitDoor != null)
+            StartCoroutine(RevealExitDoor());
         OpenDoors();
     }
 
