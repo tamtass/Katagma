@@ -148,7 +148,11 @@ public class PlayerMovement : MonoBehaviour
     {
         canMove = false;
         rb.linearVelocity = Vector2.zero;
-        if (GameManager.Instance != null)
+        Time.timeScale = 0f;
+        if (TransitionScreen.Instance != null)
+            TransitionScreen.Instance.ShowDeath(
+                onBlack: () => { if (GameManager.Instance != null) GameManager.Instance.ShowGameOver(false); });
+        else if (GameManager.Instance != null)
             GameManager.Instance.ShowGameOver(false);
     }
 

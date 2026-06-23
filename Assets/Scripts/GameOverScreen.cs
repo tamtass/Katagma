@@ -1,8 +1,6 @@
-using System.Collections;
 using TMPro;
 using UnityEngine;
 
-[RequireComponent(typeof(CanvasGroup))]
 public class GameOverScreen : MonoBehaviour
 {
     [Header("Win / Lose")]
@@ -18,57 +16,57 @@ public class GameOverScreen : MonoBehaviour
     public TextMeshProUGUI roomsClearedText;
     public TextMeshProUGUI floorsText;
 
-    [Header("Settings")]
-    public float fadeDuration = 1f;
-
-    private CanvasGroup _canvasGroup;
-
-    void Awake()
-    {
-        _canvasGroup = GetComponent<CanvasGroup>();
-        _canvasGroup.alpha = 0f;
-        gameObject.SetActive(false);
-    }
+    private bool _isWin;
 
     public void Show(bool isWin)
     {
+        _isWin = isWin;
         gameObject.SetActive(true);
 
-        if (winTitle != null)  winTitle.SetActive(isWin);
+        if (winTitle  != null) winTitle.SetActive(isWin);
         if (loseTitle != null) loseTitle.SetActive(!isWin);
-        if (winImage != null)  winImage.SetActive(isWin);
+        if (winImage  != null) winImage.SetActive(isWin);
         if (loseImage != null) loseImage.SetActive(!isWin);
 
         var gm = GameManager.Instance;
         if (gm != null)
         {
-            scoreText.text        = gm.Score.ToString();
-            enemiesKilledText.text = gm.EnemiesKilled.ToString();
-            roomsClearedText.text  = gm.RoomsCleared.ToString();
-            floorsText.text        = gm.FloorsCleared.ToString();
-
-            int total   = (int)gm.ElapsedTime;
-            int hours   = total / 3600;
-            int minutes = total % 3600 / 60;
-            int seconds = total % 60;
-            timeText.text = hours > 0
-                ? $"{hours:D2}:{minutes:D2}:{seconds:D2}"
-                : $"{minutes:D2}:{seconds:D2}";
+            if (scoreText          != null) scoreText.text          = gm.Score.ToString();
+            if (enemiesKilledText  != null) enemiesKilledText.text  = gm.EnemiesKilled.ToString();
+            if (roomsClearedText   != null) roomsClearedText.text   = gm.RoomsCleared.ToString();
+            if (floorsText         != null) floorsText.text         = gm.FloorsCleared.ToString();
+            if (timeText != null)
+            {
+                int total   = (int)gm.ElapsedTime;
+                int hours   = total / 3600;
+                int minutes = total % 3600 / 60;
+                int seconds = total % 60;
+                timeText.text = hours > 0
+                    ? $"{hours:D2}:{minutes:D2}:{seconds:D2}"
+                    : $"{minutes:D2}:{seconds:D2}";
+            }
         }
-
-        StartCoroutine(FadeIn());
     }
 
-    private IEnumerator FadeIn()
+    public void OnContinueClicked()
     {
-        _canvasGroup.alpha = 0f;
-        float elapsed = 0f;
-        while (elapsed < fadeDuration)
+        if (_isWin)
         {
-            elapsed += Time.unscaledDeltaTime;
-            _canvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed / fadeDuration);
-            yield return null;
+            if (TransitionScreen.Instance != null)
+                TransitionScreen.Instance.Transition(0.5f, 1f, onBlack: () =>
+                {
+                    gameObject.SetActive(false);
+                    if (GameManager.Instance != null) GameManager.Instance.ShowStoryScreen();
+                });
+            else
+            {
+                gameObject.SetActive(false);
+                if (GameManager.Instance != null) GameManager.Instance.ShowStoryScreen();
+            }
         }
-        _canvasGroup.alpha = 1f;
+        else
+        {
+            if (GameManager.Instance != null) GameManager.Instance.ReturnToMainMenu();
+        }
     }
 }
