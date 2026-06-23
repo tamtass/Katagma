@@ -336,7 +336,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &39724078
 Transform:
   m_ObjectHideFlags: 0
@@ -1481,7 +1481,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!225 &318750629
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2453,7 +2453,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 20
   m_TargetDisplay: 0
 --- !u!114 &571624207
 MonoBehaviour:
@@ -2470,13 +2470,16 @@ MonoBehaviour:
   fracturedText: {fileID: 1839863258}
   floorText: {fileID: 1714112128}
   deathFadeIn: 2
+  deathTextReveal: 0.5
   deathHold: 1
+  deathTextFadeOut: 0.3
   deathFadeOut: 1
   floorFadeIn: 0.6
+  floorTextReveal: 0.5
   floorHold: 1.2
+  floorTextFadeOut: 0.3
   floorFadeOut: 0.6
-  textRevealDuration: 0.5
-  textStartScale: 0.8
+  floorTextStartScale: 0.8
 --- !u!1 &663052036
 GameObject:
   m_ObjectHideFlags: 0
