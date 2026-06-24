@@ -10,7 +10,6 @@ public class InputManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -20,19 +19,25 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance != null && GameManager.Instance.IsGameRunning)
+        if (GameManager.Instance == null) return;
+        if (!Keyboard.current.escapeKey.wasPressedThisFrame) return;
+
+        if (GameManager.Instance.optionsMenuUI != null &&
+            GameManager.Instance.optionsMenuUI.activeSelf)
         {
-            if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            {
-                if (GameManager.Instance.pauseMenuUI.activeSelf)
-                {
-                    GameManager.Instance.ResumeGame();
-                }
-                else
-                {
-                    GameManager.Instance.PauseGame();
-                }
-            }
+            GameManager.Instance.CloseOptions();
+        }
+        else if (GameManager.Instance.leaderboardUI != null &&
+                 GameManager.Instance.leaderboardUI.activeSelf)
+        {
+            GameManager.Instance.CloseLeaderboard();
+        }
+        else if (GameManager.Instance.IsGameRunning)
+        {
+            if (GameManager.Instance.pauseMenuUI.activeSelf)
+                GameManager.Instance.ResumeGame();
+            else
+                GameManager.Instance.PauseGame();
         }
     }
 }

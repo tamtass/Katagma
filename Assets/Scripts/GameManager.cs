@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     [Header("UI Screens")]
     public GameOverScreen          gameOverScreen;
     public StoryProgressionScreen  storyProgressionScreen;
+    public GameObject              optionsMenuUI;
+    public GameObject              leaderboardUI;
 
     // ── Stats ────────────────────────────────────────────────────────────────
     public bool  IsGameRunning { get; private set; }
@@ -28,6 +30,12 @@ public class GameManager : MonoBehaviour
     public int   EnemiesKilled { get; private set; }
     public int   RoomsCleared  { get; private set; }
     public int   FloorsCleared { get; private set; }
+
+    public bool IsGameMuted
+    {
+        get => AudioListener.volume == 0f;
+        set => AudioListener.volume = value ? 0f : 1f;
+    }
 
     public void OnEnemyKilled()        => EnemiesKilled++;
     public void OnCombatRoomCleared()  => RoomsCleared++;
@@ -55,12 +63,13 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
             mainMenuUI.SetActive(true);
             gameSystem.SetActive(false);
             pauseMenuUI.SetActive(false);
             if (gameOverScreen         != null) gameOverScreen.gameObject.SetActive(false);
             if (storyProgressionScreen != null) storyProgressionScreen.gameObject.SetActive(false);
+            if (optionsMenuUI          != null) optionsMenuUI.SetActive(false);
+            if (leaderboardUI          != null) leaderboardUI.SetActive(false);
         }
         else Destroy(gameObject);
     }
@@ -179,6 +188,66 @@ public class GameManager : MonoBehaviour
         storyProgressionScreen.Show();
     }
 
+    public void OpenOptions()
+    {
+        if (TransitionScreen.Instance != null)
+            TransitionScreen.Instance.Transition(0.5f, 0.5f, onBlack: () =>
+            {
+                mainMenuUI.SetActive(false);
+                if (optionsMenuUI != null) optionsMenuUI.SetActive(true);
+            });
+        else
+        {
+            mainMenuUI.SetActive(false);
+            if (optionsMenuUI != null) optionsMenuUI.SetActive(true);
+        }
+    }
+
+    public void CloseOptions()
+    {
+        if (TransitionScreen.Instance != null)
+            TransitionScreen.Instance.Transition(0.5f, 0.5f, onBlack: () =>
+            {
+                if (optionsMenuUI != null) optionsMenuUI.SetActive(false);
+                mainMenuUI.SetActive(true);
+            });
+        else
+        {
+            if (optionsMenuUI != null) optionsMenuUI.SetActive(false);
+            mainMenuUI.SetActive(true);
+        }
+    }
+
+    public void OpenLeaderboard()
+    {
+        if (TransitionScreen.Instance != null)
+            TransitionScreen.Instance.Transition(0.5f, 0.5f, onBlack: () =>
+            {
+                mainMenuUI.SetActive(false);
+                if (leaderboardUI != null) leaderboardUI.SetActive(true);
+            });
+        else
+        {
+            mainMenuUI.SetActive(false);
+            if (leaderboardUI != null) leaderboardUI.SetActive(true);
+        }
+    }
+
+    public void CloseLeaderboard()
+    {
+        if (TransitionScreen.Instance != null)
+            TransitionScreen.Instance.Transition(0.5f, 0.5f, onBlack: () =>
+            {
+                if (leaderboardUI != null) leaderboardUI.SetActive(false);
+                mainMenuUI.SetActive(true);
+            });
+        else
+        {
+            if (leaderboardUI != null) leaderboardUI.SetActive(false);
+            mainMenuUI.SetActive(true);
+        }
+    }
+
     public void PauseGame()
     {
         if (IsPlayerDead) return;
@@ -214,6 +283,8 @@ public class GameManager : MonoBehaviour
         if (gameOverScreen         != null) gameOverScreen.gameObject.SetActive(false);
         if (storyProgressionScreen != null) storyProgressionScreen.gameObject.SetActive(false);
         if (pauseMenuUI            != null) pauseMenuUI.SetActive(false);
+        if (optionsMenuUI          != null) optionsMenuUI.SetActive(false);
+        if (leaderboardUI          != null) leaderboardUI.SetActive(false);
 
         floorGenerator.ClearFloor();
 

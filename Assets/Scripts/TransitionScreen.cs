@@ -34,7 +34,6 @@ public class TransitionScreen : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else { Destroy(gameObject); return; }
-        DontDestroyOnLoad(gameObject);
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha          = 0f;
         _canvasGroup.blocksRaycasts = false;
