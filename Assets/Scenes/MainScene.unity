@@ -6203,12 +6203,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FloorGenerator
   targetRoomCount: 15
   maxItemRooms: 1
-  maxNewRoomNeighbors: 2
+  maxNewRoomNeighbors: 1
   floors:
-  - startingRoomPrefab: {fileID: 4268844599837157330, guid: 02b6735cefd7afe47bbf21c9a712735c, type: 3}
-    normalRoomPrefab: {fileID: 4268844599837157330, guid: e623d7d6f8c93194e844977847488af8, type: 3}
-    itemRoomPrefab: {fileID: 4268844599837157330, guid: 3e82abb5ac7267342b6af42019cf4f13, type: 3}
-    bossRoomPrefab: {fileID: 4268844599837157330, guid: 9af24165265d54d4a840ebefb53aaa04, type: 3}
   - startingRoomPrefab: {fileID: 4268844599837157330, guid: 02b6735cefd7afe47bbf21c9a712735c, type: 3}
     normalRoomPrefab: {fileID: 4268844599837157330, guid: e623d7d6f8c93194e844977847488af8, type: 3}
     itemRoomPrefab: {fileID: 4268844599837157330, guid: 3e82abb5ac7267342b6af42019cf4f13, type: 3}
