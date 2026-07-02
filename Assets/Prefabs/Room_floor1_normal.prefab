@@ -1442,15 +1442,21 @@ MonoBehaviour:
   bottomSpawnPoint: {fileID: 3513987917312868623}
   leftSpawnPoint: {fileID: 2605366626703427607}
   rightSpawnPoint: {fileID: 4744927968007628420}
+  itemSpawnPoint: {fileID: 0}
   enemyPrefabs:
   - {fileID: 9183751629112550458, guid: 8786332a5b42cc548a6688128c64b128, type: 3}
-  minSpawnBudget: 1
-  maxSpawnBudget: 1
+  - {fileID: 5845820320720261194, guid: 7771e286df778f04cabf8f98b9feb08d, type: 3}
+  - {fileID: 2712853590468455232, guid: a912854b02aab54489f92699e38e0acd, type: 3}
+  minSpawnBudget: 3
+  maxSpawnBudget: 3
   spawnAreaHalfExtents: {x: 7, y: 3.5}
   initialSpawnDelay: 0.4
   spawnInterval: 0.15
   minDistanceFromEntry: 4
   bossPrefabs: []
+  exitDoor: {fileID: 0}
+  exitDoorDelay: 1.5
+  exitDoorRevealDuration: 0.5
   roomType: 1
   gridPosition: {x: 0, y: 0}
 --- !u!1 &5496862141445766592

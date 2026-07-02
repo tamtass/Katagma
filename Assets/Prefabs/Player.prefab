@@ -444,11 +444,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   maxHealth: 50
   health: 50
-  movementSpeed: 7
-  attackSpeed: 8
-  damage: 100
-  attackRange: 7
-  projectileCount: 6
+  movementSpeed: 5
+  attackSpeed: 5
+  damage: 50
+  attackRange: 4
+  projectileCount: 3
   spriteRenderer: {fileID: 4345495092549718667}
   frontSprite: {fileID: 2099384810065395903, guid: 21347e525512acd4c8a8c4aecb48e2f5, type: 3}
   backSprite: {fileID: 1911844830866190439, guid: 21347e525512acd4c8a8c4aecb48e2f5, type: 3}

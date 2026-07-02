@@ -1,0 +1,55 @@
+@startuml AppStateMachine
+
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+<style>
+stateDiagram {
+  BackgroundColor white
+  BorderColor #555555
+  FontSize 11
+}
+state {
+  BackgroundColor #f0f4ff
+  BorderColor #555555
+  FontSize 11
+}
+arrow {
+  LineColor #333333
+  FontSize 10
+}
+</style>
+
+[*] --> MainMenu
+
+state "Main Menu"   as MainMenu
+state "Gameplay"    as Gameplay
+state "Paused"      as Paused
+state "Stats Screen" as Stats
+state "Story Screen" as Story
+state "Options"     as Options
+state "Leaderboard" as Leaderboard
+state "win?"        as WinChoice <<choice>>
+
+MainMenu    --> Gameplay     : Start Game
+MainMenu    --> Options      : Open Options
+MainMenu    --> Leaderboard  : Open Leaderboard
+MainMenu    --> [*]          : Quit
+
+Gameplay    --> Paused       : ESC
+Paused      --> Gameplay     : Resume / ESC
+Paused      --> MainMenu     : Return to Menu
+
+Gameplay    --> Stats        : Player dies\n[FRACTURED sequence]
+Gameplay    --> Stats        : All floors cleared
+
+Stats       --> WinChoice    : Continue
+WinChoice   --> Story        : [win]
+WinChoice   --> MainMenu     : [lose]
+
+Story       --> MainMenu     : Continue
+
+Options     --> MainMenu     : Back / ESC
+Leaderboard --> MainMenu     : Close / ESC
+
+@enduml

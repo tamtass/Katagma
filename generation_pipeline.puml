@@ -1,0 +1,85 @@
+@startuml GenerationPipeline
+
+<style>
+activityDiagram {
+  BackgroundColor white
+}
+activity {
+  BackgroundColor #f0f4ff
+  BorderColor #555555
+  FontSize 11
+}
+partition {
+  BackgroundColor #fafafa
+  BorderColor #aaaaaa
+  FontSize 12
+}
+arrow {
+  LineColor #333333
+  FontSize 10
+}
+note {
+  BackgroundColor #fff8e1
+  BorderColor #ccaa00
+  FontSize 10
+}
+</style>
+
+start
+
+partition "Phase 1 — Constrained Random-Walk Expansion" {
+  :S ← { (0, 0) };
+
+  while (|S| < targetRoomCount) is (true)
+    :source ← argmin { neighborCount(p, S) + U(0, 0.49) | p ∈ S };
+    note left
+      Noise term scaled to
+      0.49 ensures it never 
+      overrides a real difference
+      in neighbour count
+    end note
+
+    :shuffle cardinal directions;
+    :candidate  c ← source + direction;
+
+    if (c ∉ S  and  neighborCount(c, S) ≤ maxNeighbors?) then (yes)
+      :S ← S ∪ { c };
+    else (no)
+      :try next direction;
+    endif
+  endwhile (|S| = targetRoomCount)
+
+  :occupied cell set  S;
+}
+
+partition "Phase 2 — BFS-Driven Room-Type Assignment" {
+  :D₀ ← BFS( origin, S );
+  note left
+    Shortest-path distances from
+    start room to every cell in S
+  end note
+
+  :boss ← argmax { D₀(p) | p ∈ S,  p ≠ origin };
+  note left
+    Unconditional: any cell is
+    eligible, not just dead-ends
+  end note
+
+  :Dᵦ ← BFS( boss, S );
+  note left
+    Distances from boss room;
+    used to place item rooms
+    as far from the boss as possible
+  end note
+
+  :item rooms ← top-k cells by Dᵦ,  k = maxItemRooms\n(excluding already-assigned cells);
+
+  :origin        →  Starting room;
+  :remaining  →  Normal rooms;
+
+  :typed room map;
+}
+
+stop
+
+@enduml

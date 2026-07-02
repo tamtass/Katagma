@@ -1,0 +1,96 @@
+@startuml Katagma_UseCaseDiagram
+
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam nodesep 6
+skinparam ranksep 15
+
+<style>
+usecase {
+  BackgroundColor #f9f9f9
+  BorderColor #555555
+  FontSize 11
+  Padding 1
+}
+arrow {
+  LineColor #333333
+  FontSize 11
+}
+actor {
+  FontSize 11
+}
+</style>
+
+left to right direction
+
+actor "Player" as P
+actor "Firebase\n(Firestore)" as FB
+
+rectangle "Katagma" {
+
+  package "Main Menu" {
+    usecase "Start New Game" as UC1
+    usecase "Open Options" as UC2
+    usecase "View Leaderboard" as UC3
+    usecase "Quit Game" as UC4
+  }
+
+  package "Gameplay" {
+    usecase "Move Character" as UC5
+    usecase "Attack Enemies" as UC6
+    usecase "Pick Up Item" as UC7
+    usecase "Pause / Resume Game" as UC8
+    usecase "Clear Room" as UC9
+    usecase "Advance to Next Floor" as UC10
+  }
+
+  package "Options" {
+    usecase "Toggle Mute" as UC11
+    usecase "Delete Save Data" as UC12
+    usecase "Confirm Deletion" as UC13
+  }
+
+  package "End of Run" {
+    usecase "View Stats Screen" as UC14
+    usecase "Submit Score" as UC15
+    usecase "View Story Progression" as UC16
+    usecase "Return to Main Menu" as UC17
+  }
+
+  package "Leaderboard" {
+    usecase "Fetch Top 100 Scores" as UC18
+    usecase "Refresh Leaderboard" as UC19
+  }
+}
+
+' Force Main Menu and Gameplay into separate columns so they sit side by side
+UC4 -[hidden]-> UC5
+
+P --> UC1
+P --> UC2
+P --> UC3
+P --> UC4
+P --> UC5
+P --> UC6
+P --> UC7
+P --> UC8
+P --> UC9
+P --> UC10
+P --> UC11
+P --> UC12
+P --> UC14
+P --> UC15
+P --> UC16
+P --> UC17
+P --> UC19
+
+UC12 ..> UC13 : <<include>>
+UC3  ..> UC18 : <<include>>
+UC15 ..> UC18 : <<include>>
+UC19 ..> UC18 : <<include>>
+UC16 ..> UC14 : <<extend>>\n{condition: player wins}
+
+UC18 --> FB
+UC15 --> FB
+
+@enduml

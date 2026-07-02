@@ -1,0 +1,40 @@
+@startuml ContextDFD
+
+skinparam actorStyle awesome
+skinparam linetype ortho
+
+<style>
+rectangle {
+  BackgroundColor #f0f4ff
+  BorderColor #555555
+  FontSize 11
+}
+actor {
+  FontSize 11
+}
+arrow {
+  LineColor #333333
+  FontSize 10
+}
+database {
+  BackgroundColor #fff8e1
+  BorderColor #555555
+  FontSize 11
+}
+</style>
+
+actor      "Player"                    as Player
+rectangle  "Katagma\n(Game System)"   as System  #e8f5e9
+database   "Firebase\n(Firestore)"    as Firebase
+database   "Local Storage\n(PlayerPrefs)" as Local
+
+Player  -->  System   : keyboard & mouse input
+System  -->  Player   : rendered game state
+
+System  -->  Firebase : score submission
+Firebase --> System   : leaderboard data
+
+System  -->  Local    : story progress, last player name
+Local   -->  System   : story progress,\n last player name
+
+@enduml

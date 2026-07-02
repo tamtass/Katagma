@@ -1,0 +1,67 @@
+@startuml EnemyStateMachine
+
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+<style>
+stateDiagram {
+  BackgroundColor white
+  BorderColor #555555
+  FontSize 11
+}
+state {
+  BackgroundColor #f0f4ff
+  BorderColor #555555
+  FontSize 11
+}
+arrow {
+  LineColor #333333
+  FontSize 10
+}
+note {
+  BackgroundColor #fff8e1
+  BorderColor #ccaa00
+  FontSize 10
+}
+</style>
+
+[*] --> Spawning : Instantiated
+
+state "Spawning"    as Spawning
+state "Chasing"     as Chasing
+state "Knocked Back" as KnockedBack
+state "Dead"        as Dead
+
+Spawning    --> Chasing      : spawnStunTimer expires\n(scale 0 → 1 complete)
+
+Chasing     --> KnockedBack  : player weapon hit\n[ApplyKnockback()]
+Chasing     --> KnockedBack  : contact with player\n[self-bounce after dealing damage]
+Chasing     --> Dead         : health ≤ 0
+
+KnockedBack --> Chasing      : knockbackTimer expires
+KnockedBack --> Dead         : health ≤ 0
+
+Dead        --> [*]          : score awarded, item drop\nattempted, GameObject destroyed
+
+note right of Spawning
+  Enemy scales from 0 to 1 over
+  spawnStunDuration (default 0.6 s).
+  No movement or rotation during this phase.
+end note
+
+note right of Chasing
+  Each FixedUpdate: rotate toward player
+  (Atan2), then move at moveSpeed.
+  OnTriggerStay2D: deals damage to player
+  on contact (damageCooldown gated).
+end note
+
+note right of KnockedBack
+  An impulse force is applied; rb.velocity
+  is NOT overwritten each frame while
+  knockbackTimer > 0.
+  A 0.05 s red flash plays concurrently
+  whenever TakeDamage() is called.
+end note
+
+@enduml

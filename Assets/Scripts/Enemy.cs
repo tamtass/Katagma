@@ -18,6 +18,12 @@ public class Enemy : MonoBehaviour
     [Header("Spawn")]
     public float spawnStunDuration = 0.6f;
 
+    [Header("Animation")]
+    public Sprite[] frames;
+    [Min(0.1f)] public float frameFrequency = 8f;   // frame flips per second
+    [Min(0.1f)] public float scaleFrequency = 2f;   // scale pulse cycles per second
+    [Range(0f, 0.5f)] public float scaleAmplitude = 0.08f;
+
     [Header("Item Drop")]
     [Range(0f, 1f)]
     public float dropChance = 0.25f;
@@ -32,6 +38,12 @@ public class Enemy : MonoBehaviour
     private float spawnStunTimer;
     private Coroutine damageFlashCoroutine;
     private Color originalColor;
+
+    private float frameTimer;
+    private int   frameIndex;
+    private bool  spawnDone;
+
+    protected bool suppressScalePulse;
 
     private static readonly WaitForSeconds _flashDuration = new(0.05f);
 
@@ -61,21 +73,43 @@ public class Enemy : MonoBehaviour
             yield return null;
         }
         transform.localScale = Vector3.one;
+        spawnDone = true;
+    }
+
+    protected virtual void Update()
+    {
+        if (!spawnDone) return;
+
+        // Scale pulse
+        if (!suppressScalePulse)
+        {
+            float s = 1f + scaleAmplitude * Mathf.Sin(Time.time * scaleFrequency * Mathf.PI * 2f);
+            transform.localScale = Vector3.one * s;
+        }
+
+        // Frame flip
+        if (frames != null && frames.Length >= 2 && spriteRenderer != null)
+        {
+            frameTimer += Time.deltaTime;
+            if (frameTimer >= 1f / frameFrequency)
+            {
+                frameTimer = 0f;
+                frameIndex = 1 - frameIndex;
+                spriteRenderer.sprite = frames[frameIndex];
+            }
+        }
     }
 
     protected virtual void FixedUpdate()
     {
         if (player == null) return;
 
-        Vector2 dir = (player.position - transform.position).normalized;
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
-
-        spawnStunTimer  -= Time.fixedDeltaTime;
-        knockbackTimer  -= Time.fixedDeltaTime;
-        damageCooldown  -= Time.fixedDeltaTime;
+        spawnStunTimer -= Time.fixedDeltaTime;
+        knockbackTimer -= Time.fixedDeltaTime;
+        damageCooldown -= Time.fixedDeltaTime;
         if (spawnStunTimer > 0f || knockbackTimer > 0f) return;
 
+        Vector2 dir = (player.position - transform.position).normalized;
         rb.linearVelocity = dir * moveSpeed;
     }
 

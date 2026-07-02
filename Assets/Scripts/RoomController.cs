@@ -132,8 +132,14 @@ public class RoomController : MonoBehaviour
     private IEnumerator SpawnBoss()
     {
         yield return new WaitForSeconds(initialSpawnDelay);
-        GameObject prefab = bossPrefabs[Random.Range(0, bossPrefabs.Length)];
-        spawnedEnemies.Add(Instantiate(prefab, transform.position, Quaternion.identity, transform));
+        GameObject prefab   = bossPrefabs[Random.Range(0, bossPrefabs.Length)];
+        GameObject bossObj  = Instantiate(prefab, transform.position, Quaternion.identity, transform);
+        spawnedEnemies.Add(bossObj);
+
+        BossHealthBar bar = GetComponentInChildren<BossHealthBar>(true);
+        if (bar != null && bossObj.TryGetComponent<Enemy>(out var enemy))
+            bar.SetBoss(enemy);
+
         spawningComplete = true;
     }
 

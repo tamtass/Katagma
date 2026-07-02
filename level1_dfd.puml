@@ -1,0 +1,76 @@
+@startuml Level1DFD
+
+skinparam linetype ortho
+top to bottom direction
+
+<style>
+rectangle {
+  BackgroundColor #f0f4ff
+  BorderColor #555555
+  FontSize 10
+}
+actor {
+  FontSize 10
+}
+arrow {
+  LineColor #333333
+  FontSize 9
+}
+database {
+  BackgroundColor #fff8e1
+  BorderColor #999999
+  FontSize 10
+}
+</style>
+
+' ── External entities ────────────────────────────────────────────────────────
+actor    "Player"          as Player
+database "Firebase"        as Firebase
+database "Local Storage"   as Local
+
+' ── Processes ─────────────────────────────────────────────────────────────────
+rectangle "P1\nInput Handler"       as P1
+rectangle "P2\nFloor Generator"     as P2
+rectangle "P3\nGame Loop"           as P3
+rectangle "P4\nStats Tracker"       as P4
+rectangle "P5\nUI & Transitions"    as P5
+rectangle "P6\nLeaderboard Service" as P6
+rectangle "P7\nPersistence Manager" as P7
+
+' ── Internal data stores ──────────────────────────────────────────────────────
+database "DS1\nRun State"    as DS1
+database "DS2\nFloor Layout" as DS2
+
+' ── External flows ────────────────────────────────────────────────────────────
+Player   -->  P1       : keyboard & mouse input
+P3       -->  Player   : game world rendering
+P5       -->  Player   : UI screens & audio
+
+Firebase -->  P6       : top 100 leaderboard entries
+P6       -->  Firebase : score entry\n(name, score, floors, time)
+
+Local    -->  P7       : stored save data
+P7       -->  Local    : updated save data
+
+' ── Internal flows ────────────────────────────────────────────────────────────
+P1  -->  P3  : movement vector, attack trigger
+P1  -->  P5  : ESC / menu navigation events
+
+P5  -->  P2  : generate floor (index)
+P2  -->  DS2 : room layout (positions, types, adjacency)
+DS2 -->  P3  : room graph, enemy spawn data
+
+P3  -->  DS1 : player health, position
+P3  -->  P4  : enemy killed, room cleared, time delta
+P3  -->  P5  : death trigger, win trigger, floor advance
+
+P4  -->  DS1 : score, elapsed time, kill & room counters
+DS1 -->  P5  : run statistics (for display & submission)
+
+P5  -->  P6  : submit score request (name + stats)
+P6  -->  P5  : formatted leaderboard entries
+
+P7  -->  P5  : story unlock state, last player name
+P5  -->  P7  : new story unlock index, submitted name
+
+@enduml

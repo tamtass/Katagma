@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthBar
   healthBarBase: {fileID: 33018894}
-  healthBarActual: {fileID: 986132939}
+  healthBarFill: {fileID: 986132939}
   healthText: {fileID: 755503620}
   slideSpeed: 80
 --- !u!1 &35801131
@@ -6088,7 +6088,7 @@ MonoBehaviour:
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -6201,7 +6201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b676bfc71f08340ba70a9b50abf3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGenerator
-  targetRoomCount: 15
+  targetRoomCount: 3
   maxItemRooms: 1
   maxNewRoomNeighbors: 1
   floors:
@@ -7999,7 +7999,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0.00012207031}
-  m_SizeDelta: {x: 1110, y: 1428.8477}
+  m_SizeDelta: {x: 1110, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1317755316
 MonoBehaviour:
@@ -8031,7 +8031,7 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 50
-    m_Bottom: 0
+    m_Bottom: 50
   m_ChildAlignment: 1
   m_Spacing: 70
   m_ChildForceExpandWidth: 0
@@ -9393,8 +9393,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1869074824}
   m_HandleRect: {fileID: 1869074823}
   m_Direction: 2
-  m_Value: 0.9999998
-  m_Size: 0.52431464
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10860,8 +10860,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 459961417}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.47568527}
-  m_AnchorMax: {x: 1, y: 0.9999999}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
