@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: b0ced312a82c1084b8297245ae0a0af2
+guid: cb3de10f49e58ca4cbcc4c398a453312
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2830499052233945671
-    second: slow_enemy_0
+      213: -5768364531109799046
+    second: onion_0
   - first:
-      213: 4328343157147161019
-    second: slow_enemy_1
+      213: -1854752672915534342
+    second: onion_1
   - first:
-      213: -2368521339256566843
-    second: slow_enemy_2
+      213: 4140360251420805661
+    second: onion_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -119,45 +119,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: slow_enemy_0
+      name: onion_0
       rect:
         serializedVersion: 2
-        x: 29
-        y: 157
-        width: 847
-        height: 615
+        x: 179
+        y: 73
+        width: 911
+        height: 1137
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9bd048ecb1c08b8d0800000000000000
-      internalID: -2830499052233945671
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: slow_enemy_1
-      rect:
-        serializedVersion: 2
-        x: 898
-        y: 153
-        width: 855
-        height: 613
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bb1dfbb3b2d511c30800000000000000
-      internalID: 4328343157147161019
+      spriteID: 0ca4a6bcd70dcd74d9eb331ff72712a6
+      internalID: -5768364531109799046
       vertices: []
       indices: 
       edges: []
@@ -166,7 +144,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 607651c7f84ba8e4d906203eaaedf63f
+    spriteID: ffc0be5123c7190419d5cbfe87360abc
     internalID: 0
     vertices: []
     indices: 
@@ -176,9 +154,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      slow_enemy_0: -2830499052233945671
-      slow_enemy_1: 4328343157147161019
-      slow_enemy_2: -2368521339256566843
+      onion_0: -5768364531109799046
+      onion_1: -1854752672915534342
+      onion_2: 4140360251420805661
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -29,6 +29,9 @@ public class Enemy : MonoBehaviour
     public float dropChance = 0.25f;
     public GameObject[] itemDropPool;
 
+    [Header("Death")]
+    public GameObject deathEffectPrefab;   // e.g. a smoke puff, spawned when the enemy dies
+
     protected Rigidbody2D rb;
     protected Transform player;
     protected SpriteRenderer spriteRenderer;
@@ -44,6 +47,7 @@ public class Enemy : MonoBehaviour
     private bool  spawnDone;
 
     protected bool suppressScalePulse;
+    protected bool suppressFrameAnimation;
 
     private static readonly WaitForSeconds _flashDuration = new(0.05f);
 
@@ -88,7 +92,7 @@ public class Enemy : MonoBehaviour
         }
 
         // Frame flip
-        if (frames != null && frames.Length >= 2 && spriteRenderer != null)
+        if (!suppressFrameAnimation && frames != null && frames.Length >= 2 && spriteRenderer != null)
         {
             frameTimer += Time.deltaTime;
             if (frameTimer >= 1f / frameFrequency)
@@ -157,6 +161,10 @@ public class Enemy : MonoBehaviour
 
     protected virtual void Die()
     {
+        // Spawned unparented so it outlives this GameObject and finishes on its own.
+        if (deathEffectPrefab != null)
+            Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScore(scoreValue);

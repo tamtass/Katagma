@@ -217,6 +217,7 @@ MonoBehaviour:
   scaleAmplitude: 0.08
   dropChance: 0.25
   itemDropPool: []
+  deathEffectPrefab: {fileID: 5318326626791863775, guid: 4a4f37876c5b51345ab69f1096f287a9, type: 3}
   projectilePrefab: {fileID: 376354835547560908, guid: 5fcd8ca7c491d054786d5d37209965fb, type: 3}
   windupDuration: 0.1
   postShotPause: 0.6

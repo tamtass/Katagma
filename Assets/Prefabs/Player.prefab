@@ -445,9 +445,9 @@ MonoBehaviour:
   maxHealth: 50
   health: 50
   movementSpeed: 5
-  attackSpeed: 5
-  damage: 50
-  attackRange: 4
+  attackSpeed: 2
+  damage: 100
+  attackRange: 3
   projectileCount: 3
   spriteRenderer: {fileID: 4345495092549718667}
   frontSprite: {fileID: 2099384810065395903, guid: 21347e525512acd4c8a8c4aecb48e2f5, type: 3}

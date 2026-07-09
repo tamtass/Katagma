@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: b0ced312a82c1084b8297245ae0a0af2
+guid: f77bb8f605592e049b9c3ca7b1602934
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2830499052233945671
-    second: slow_enemy_0
-  - first:
-      213: 4328343157147161019
-    second: slow_enemy_1
-  - first:
-      213: -2368521339256566843
-    second: slow_enemy_2
+      213: 8229974522389942337
+    second: Screenshot 2026-07-09 142622_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -43,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -81,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -119,45 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: slow_enemy_0
+      name: Screenshot 2026-07-09 142622_0
       rect:
         serializedVersion: 2
-        x: 29
-        y: 157
-        width: 847
-        height: 615
+        x: 37
+        y: 50
+        width: 479
+        height: 314
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9bd048ecb1c08b8d0800000000000000
-      internalID: -2830499052233945671
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: slow_enemy_1
-      rect:
-        serializedVersion: 2
-        x: 898
-        y: 153
-        width: 855
-        height: 613
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bb1dfbb3b2d511c30800000000000000
-      internalID: 4328343157147161019
+      spriteID: 140519d493eb63270800000000000000
+      internalID: 8229974522389942337
       vertices: []
       indices: 
       edges: []
@@ -166,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 607651c7f84ba8e4d906203eaaedf63f
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -176,9 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      slow_enemy_0: -2830499052233945671
-      slow_enemy_1: 4328343157147161019
-      slow_enemy_2: -2368521339256566843
+      Screenshot 2026-07-09 142622_0: 8229974522389942337
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

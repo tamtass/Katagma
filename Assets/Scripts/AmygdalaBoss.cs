@@ -13,10 +13,10 @@ public class AmygdalaBoss : Enemy
     [Range(0f, 1f)] public float phaseTwoThreshold = 0.5f;   // HP fraction that triggers phase 2
 
     [Header("Amygdala — Telegraphs")]
-    public float telegraphDuration      = 0.5f;              // body tenses this long before each attack
-    public Color telegraphColor         = new(1f, 0.55f, 0.2f);
-    public float panicTelegraphDuration = 1f;                // one-off flush on the phase transition
-    public Color panicColor             = new(1f, 0.2f, 0.2f);
+    public float  telegraphDuration      = 0.5f;             // how long the tell is shown before each attack
+    public Sprite telegraphSprite;                           // shown during the pre-attack tell
+    public float  panicTelegraphDuration = 1f;               // one-off tell on the phase transition
+    public Sprite panicSprite;                               // shown during the panic tell (falls back to telegraphSprite)
 
     [Header("Amygdala — Projectile")]
     public GameObject projectilePrefab;
@@ -35,7 +35,6 @@ public class AmygdalaBoss : Enemy
     private Phase phase;
     private float initialHealth;
     private bool  phaseTransitionStarted;
-    private Color baseColor;
 
     protected override void Start()
     {
@@ -44,7 +43,6 @@ public class AmygdalaBoss : Enemy
 
         initialHealth = health;
         phase         = Phase.PhaseOne;
-        if (spriteRenderer != null) baseColor = spriteRenderer.color;
 
         StartCoroutine(RunFight());
     }
@@ -73,13 +71,12 @@ public class AmygdalaBoss : Enemy
 
     private IEnumerator PhaseTransition()
     {
-        // Brief "panic" tell: a stronger flush and a pause before phase 2 ramps up.
-        if (spriteRenderer != null) spriteRenderer.color = panicColor;
-        yield return new WaitForSeconds(panicTelegraphDuration);
-        if (spriteRenderer != null) spriteRenderer.color = baseColor;
+        // Brief "panic" tell before phase 2 ramps up. Uses the panic sprite if set,
+        // otherwise falls back to the regular telegraph sprite.
+        yield return ShowTelegraph(panicSprite != null ? panicSprite : telegraphSprite, panicTelegraphDuration);
 
-        phase = Phase.PhaseTwo;          // radial bursts now use the faster interval
-        StartCoroutine(SpiralLoop());    // rotating spiral layered on top of the bursts
+        phase = Phase.PhaseTwo;          // radial bursts stop, spiral takes over
+        StartCoroutine(SpiralLoop());
     }
 
     // ── Attack: radial burst (phase 1 only) ───────────────────────────────────
@@ -91,7 +88,7 @@ public class AmygdalaBoss : Enemy
         {
             yield return new WaitForSeconds(radialBurstInterval);
 
-            yield return Telegraph(telegraphDuration);
+            yield return ShowTelegraph(telegraphSprite, telegraphDuration);
             FireRing(radialCount, radialAngleOffset);
         }
     }
@@ -130,11 +127,19 @@ public class AmygdalaBoss : Enemy
             ep.Launch(dir, projectileDamage, gameObject);
     }
 
-    // Body flush used as the tell before each attack, mirroring the spawn-stun telegraph.
-    private IEnumerator Telegraph(float duration)
+    // The tell before each attack: swap in a dedicated telegraph sprite and hold it,
+    // suppressing the base two-frame animation so it isn't overwritten. When the tell
+    // ends, re-enabling the animation lets the normal frame flipping resume.
+    private IEnumerator ShowTelegraph(Sprite sprite, float duration)
     {
-        if (spriteRenderer != null) spriteRenderer.color = telegraphColor;
+        if (spriteRenderer != null && sprite != null)
+        {
+            suppressFrameAnimation = true;
+            spriteRenderer.sprite  = sprite;
+        }
+
         yield return new WaitForSeconds(duration);
-        if (spriteRenderer != null) spriteRenderer.color = baseColor;
+
+        suppressFrameAnimation = false;
     }
 }

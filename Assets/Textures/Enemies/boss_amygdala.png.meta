@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: b0ced312a82c1084b8297245ae0a0af2
+guid: 630188f67f2b9464792a97ab0415bebc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2830499052233945671
-    second: slow_enemy_0
+      213: -1348367012624230436
+    second: boss_amygdala_0
   - first:
-      213: 4328343157147161019
-    second: slow_enemy_1
+      213: -8018423963371162987
+    second: boss_amygdala_1
   - first:
-      213: -2368521339256566843
-    second: slow_enemy_2
+      213: -3351716696087122625
+    second: boss_amygdala_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -119,45 +119,67 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: slow_enemy_0
+      name: boss_amygdala_0
       rect:
         serializedVersion: 2
-        x: 29
-        y: 157
-        width: 847
-        height: 615
+        x: 17
+        y: 102
+        width: 698
+        height: 519
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9bd048ecb1c08b8d0800000000000000
-      internalID: -2830499052233945671
+      spriteID: cd79da19853a94de0800000000000000
+      internalID: -1348367012624230436
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: slow_enemy_1
+      name: boss_amygdala_1
       rect:
         serializedVersion: 2
-        x: 898
-        y: 153
-        width: 855
-        height: 613
+        x: 740
+        y: 102
+        width: 697
+        height: 519
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bb1dfbb3b2d511c30800000000000000
-      internalID: 4328343157147161019
+      spriteID: 59238c483e5d8b090800000000000000
+      internalID: -8018423963371162987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: boss_amygdala_2
+      rect:
+        serializedVersion: 2
+        x: 1467
+        y: 102
+        width: 694
+        height: 519
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3d2bfd4c6f4c71d0800000000000000
+      internalID: -3351716696087122625
       vertices: []
       indices: 
       edges: []
@@ -166,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 607651c7f84ba8e4d906203eaaedf63f
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -176,9 +198,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      slow_enemy_0: -2830499052233945671
-      slow_enemy_1: 4328343157147161019
-      slow_enemy_2: -2368521339256566843
+      boss_amygdala_0: -1348367012624230436
+      boss_amygdala_1: -8018423963371162987
+      boss_amygdala_2: -3351716696087122625
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 1}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5566153456467741822}
@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 5566153456467741822}
   - component: {fileID: 8706194267108778047}
   - component: {fileID: 5049505873345668886}
-  - component: {fileID: 5536789219723804552}
+  - component: {fileID: 3436072138960911665}
   m_Layer: 15
   m_Name: SlowEnemy
   m_TagString: Enemy
@@ -155,6 +155,7 @@ MonoBehaviour:
   dropChance: 1
   itemDropPool:
   - {fileID: 4985415875749173232, guid: 9801708e2897bdf4dafcd0781c93a023, type: 3}
+  deathEffectPrefab: {fileID: 5318326626791863775, guid: 4a4f37876c5b51345ab69f1096f287a9, type: 3}
 --- !u!50 &5049505873345668886
 Rigidbody2D:
   serializedVersion: 5
@@ -182,8 +183,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!60 &5536789219723804552
-PolygonCollider2D:
+--- !u!58 &3436072138960911665
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -217,24 +218,4 @@ PolygonCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.75738525, y: 0.5190735}
-      - {x: 0.10168457, y: 0.57766724}
-      - {x: -0.75507265, y: 0.43517664}
-      - {x: -1.5329757, y: -0.24538791}
-      - {x: -1.1671753, y: -0.541626}
-      - {x: -0.06756592, y: -0.71014404}
-      - {x: 1.2199265, y: -0.5612447}
-      - {x: 1.5558472, y: -0.19940186}
-      - {x: 1.2630682, y: 0.10778421}
-  m_UseDelaunayMesh: 1
+  m_Radius: 1

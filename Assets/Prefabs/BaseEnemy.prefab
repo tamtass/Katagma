@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalScale: {x: 0.125, y: 0.125, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2549549958174129954}
@@ -155,6 +155,7 @@ MonoBehaviour:
   dropChance: 1
   itemDropPool:
   - {fileID: 4985415875749173232, guid: 9801708e2897bdf4dafcd0781c93a023, type: 3}
+  deathEffectPrefab: {fileID: 5318326626791863775, guid: 4a4f37876c5b51345ab69f1096f287a9, type: 3}
 --- !u!50 &6082616304585491368
 Rigidbody2D:
   serializedVersion: 5

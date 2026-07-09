@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2549549958174129954}
@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -6704371230968284964, guid: 6b03ea87944d6f84eb3158c6024def9b, type: 3}
+  m_Sprite: {fileID: -1348367012624230436, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 870012135822972208}
   - component: {fileID: 5800904860104043780}
   m_Layer: 15
-  m_Name: Boss_1
+  m_Name: Boss_amygdala
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -120,7 +120,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -13.74, y: 0, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4796868130692919012}
@@ -188,7 +188,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.55
+  m_Radius: 1.44
 --- !u!114 &5800904860104043780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,29 +209,25 @@ MonoBehaviour:
   knockbackForce: 5
   knockbackDuration: 0.5
   spawnStunDuration: 0.6
-  frames: []
+  frames:
+  - {fileID: -1348367012624230436, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
+  - {fileID: -8018423963371162987, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
   frameFrequency: 8
-  scaleFrequency: 2
-  scaleAmplitude: 0.08
+  scaleFrequency: 1
+  scaleAmplitude: 0.034
   dropChance: 0.25
   itemDropPool: []
+  deathEffectPrefab: {fileID: 5318326626791863775, guid: 4a4f37876c5b51345ab69f1096f287a9, type: 3}
   phaseTwoThreshold: 0.5
   telegraphDuration: 0.5
-  telegraphColor: {r: 1, g: 0.55, b: 0.2, a: 1}
+  telegraphSprite: {fileID: -3351716696087122625, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
   panicTelegraphDuration: 1
-  panicColor: {r: 1, g: 0.2, b: 0.2, a: 1}
+  panicSprite: {fileID: -3351716696087122625, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
   projectilePrefab: {fileID: 376354835547560908, guid: 5fcd8ca7c491d054786d5d37209965fb, type: 3}
   projectileDamage: 10
   radialCount: 12
   radialBurstInterval: 2
-  radialBurstIntervalPhase2: 2
   radialAngleOffset: 0
-  shockwaveInterval: 6
-  shockwaveMaxRadius: 8
-  shockwaveSpeed: 10
-  shockwaveThickness: 0.6
-  shockwaveDamage: 20
-  shockwaveVisualPrefab: {fileID: 8903334891964206936, guid: 2341d3ccc2e8d224da3b9eb3ab506f87, type: 3}
   spiralArms: 3
   spiralFireInterval: 0.3
   spiralRotationSpeed: 75

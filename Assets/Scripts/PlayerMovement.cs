@@ -43,6 +43,9 @@ public class PlayerMovement : MonoBehaviour
 
     public bool canMove = true;
 
+    // The starting damage as authored on the prefab, captured before any upgrades.
+    public float BaseDamage { get; private set; }
+
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private float attackCooldown;
@@ -62,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
             lightningCone = GetComponentInChildren<LightningConeEffect>();
 
         health = maxHealth;
+        BaseDamage = damage;
         transform.rotation = Quaternion.identity;
     }
 

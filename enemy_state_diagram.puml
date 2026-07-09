@@ -1,7 +1,7 @@
 @startuml EnemyStateMachine
 
 skinparam packageStyle rectangle
-skinparam linetype ortho
+' skinparam linetype ortho
 
 <style>
 stateDiagram {
@@ -35,10 +35,10 @@ state "Dead"        as Dead
 Spawning    --> Chasing      : spawnStunTimer expires\n(scale 0 → 1 complete)
 
 Chasing     --> KnockedBack  : player weapon hit\n[ApplyKnockback()]
-Chasing     --> KnockedBack  : contact with player\n[self-bounce after dealing damage]
+Chasing     --> KnockedBack  : contact with\nplayer [self-bounce\nafter dealing damage]
 Chasing     --> Dead         : health ≤ 0
 
-KnockedBack --> Chasing      : knockbackTimer expires
+KnockedBack --> Chasing      : knockbackTimer\nexpires
 KnockedBack --> Dead         : health ≤ 0
 
 Dead        --> [*]          : score awarded, item drop\nattempted, GameObject destroyed

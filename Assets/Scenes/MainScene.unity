@@ -1985,6 +1985,7 @@ Transform:
   - {fileID: 997029688}
   - {fileID: 1827990356}
   - {fileID: 663052038}
+  - {fileID: 1198621243}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &318750628
@@ -6201,7 +6202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b676bfc71f08340ba70a9b50abf3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGenerator
-  targetRoomCount: 3
+  targetRoomCount: 5
   maxItemRooms: 1
   maxNewRoomNeighbors: 1
   floors:
@@ -7172,6 +7173,54 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimerDisplay
   timerText: {fileID: 1165564038}
+--- !u!1 &1198621242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1198621243}
+  - component: {fileID: 1198621244}
+  m_Layer: 0
+  m_Name: MusicManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1198621243
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198621242}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 266835771}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1198621244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198621242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eea621bf5dd84ad4ab5f189cbc9f5aa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicManager
+  menuTrack: {fileID: 8300000, guid: 9dbc95799e208e942bf77cb2122c8bf9, type: 3}
+  gameplayTrack: {fileID: 8300000, guid: e05cdbf1ebfd31743a09b46e9db20259, type: 3}
+  volume: 0.5
+  fadeDuration: 1
 --- !u!1 &1216820602
 GameObject:
   m_ObjectHideFlags: 0
@@ -10260,11 +10309,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 4367795042189729331, guid: 01114ae291df05149861e7e380ce330c, type: 3}
   floorGenerator: {fileID: 997029687}
   itemPrefabs:
-  - {fileID: 4985415875749173232, guid: 865fad13757d2dd47a905d947e1b6bda, type: 3}
-  - {fileID: 4985415875749173232, guid: 865fad13757d2dd47a905d947e1b6bda, type: 3}
-  - {fileID: 4985415875749173232, guid: 865fad13757d2dd47a905d947e1b6bda, type: 3}
-  - {fileID: 4985415875749173232, guid: 865fad13757d2dd47a905d947e1b6bda, type: 3}
-  - {fileID: 4985415875749173232, guid: 865fad13757d2dd47a905d947e1b6bda, type: 3}
+  - {fileID: 4985415875749173232, guid: 574db175c55af7f47901a523793452ec, type: 3}
   gameOverScreen: {fileID: 917090214}
   storyProgressionScreen: {fileID: 318750631}
   optionsMenuUI: {fileID: 1305675098}

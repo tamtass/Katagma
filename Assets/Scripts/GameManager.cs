@@ -78,6 +78,8 @@ public class GameManager : MonoBehaviour
     {
         if (TransitionScreen.Instance != null)
             TransitionScreen.Instance.FadeFromBlack(1f);
+
+        if (MusicManager.Instance != null) MusicManager.Instance.PlayMenu();
     }
 
     void Update()
@@ -97,6 +99,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        if (MusicManager.Instance != null) MusicManager.Instance.PlayGameplay();
+
         if (TransitionScreen.Instance != null)
         {
             TransitionScreen.Instance.ShowFloor("Floor 1",
@@ -179,6 +183,9 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         if (_playerInstance != null) _playerInstance.canMove = false;
         if (gameOverScreen  != null) gameOverScreen.Show(isWin);
+
+        // Run is over — back to the "not playing" track.
+        if (MusicManager.Instance != null) MusicManager.Instance.PlayMenu();
     }
 
     public void ShowStoryScreen()
@@ -279,6 +286,8 @@ public class GameManager : MonoBehaviour
         IsPlayerDead  = false;
         IsGameRunning = false;
         Time.timeScale = 1f;
+
+        if (MusicManager.Instance != null) MusicManager.Instance.PlayMenu();
 
         if (gameOverScreen         != null) gameOverScreen.gameObject.SetActive(false);
         if (storyProgressionScreen != null) storyProgressionScreen.gameObject.SetActive(false);
