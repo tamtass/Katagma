@@ -591,3 +591,73 @@ A final tuning pass shortened it to an actual puff: the first visible version wa
 Gave the player's lightning attack a black outline so it reads more clearly against the busy dungeon. The attack is drawn as a set of `LineRenderer` bolts (one per projectile, each a jagged midpoint-displaced line regenerated on a flicker). The outline is done the obvious way for a line: each bolt gets a second, parallel `LineRenderer` that is slightly thicker, solid black, and rendered one sorting order below it, so the coloured bolt sits on top of its own black silhouette.
 
 The line-creation code was refactored into a `CreateLine` helper so the bolt and its outline are built the same way with different width, colour, and sorting order. The outline width is the bolt's width plus `outlineWidth` on each side, and its colour tapers to transparent at the tip exactly like the bolt, so the fade-out doesn't leave a black blob at the end. A `SetPoint` helper writes each regenerated vertex to both renderers at once, so the outline always traces the identical jagged path. Because all outlines share `sortingOrder - 1` and all bolts share `sortingOrder`, every bolt draws above every outline, so overlapping bolts in the cone don't get a black seam through them. The outline is toggleable and its width and colour are inspector-exposed.
+
+---
+
+## 07.07.2026 — Screen Shake on Player Damage
+
+Added screen shake when the player takes damage. The tricky part is that the camera's position is not free — `RoomTransitionManager` writes it directly during room pans, and `Initialize` snaps it to the starting room. A shake implemented as "move the camera, then move it back" would fight those writers and could leave the camera permanently displaced if a pan happened mid-shake.
+
+The `CameraShake` component instead treats the shake as a pure offset layered on top of whatever everyone else did this frame. It runs in `LateUpdate` (after the pan coroutine has written its position for the frame): it first subtracts the offset it applied last frame, restoring the camera to its "true" position, then computes and adds a fresh offset. Because the offset is always removed before anything else is measured or added, the shake can never leak into the camera's real position — when the timer runs out, the last subtraction leaves the camera exactly where the other systems put it.
+
+The offset itself is `Random.insideUnitCircle` scaled by the magnitude and an inspector-exposed `AnimationCurve` falloff, so the shake starts at full strength and decays to zero over its lifetime (the curve's shape is tunable — linear by default, but an ease-out gives a snappier hit). Duration and magnitude are inspector fields; `Shake()` uses the defaults and an overload takes explicit values for future stronger hits (boss slams, explosions). Re-triggering mid-shake restarts the timer and keeps the stronger magnitude, so rapid consecutive hits don't feel weaker than single ones. The timer uses `Time.unscaledDeltaTime` for the same reason as the health bar slide: a killing blow freezes `timeScale`, and the shake should resolve rather than freeze at a random offset.
+
+`PlayerMovement.TakeDamage` calls `CameraShake.Instance?.Shake()` right after the health subtraction — it sits behind the invulnerability check, so i-frame hits don't rattle the screen.
+
+---
+
+## 08.07.2026 — Boss Is Immovable on Collision
+
+The Amygdala was getting shoved around when the player ran into it, which looked wrong for a large boss. There were three sources of that push: the enemy's own self-bounce in `OnTriggerStay2D`, the explicit `ApplyKnockback` the player calls from its collision handler, and the raw physics resolution of two dynamic bodies overlapping.
+
+Added a `knockbackImmune` flag to the base `Enemy` class. When set, `ApplyKnockback` early-outs and the self-bounce in `OnTriggerStay2D` is skipped — but the damage and the `damageCooldown` are still applied, so the boss still hurts the player on contact and doesn't spam that damage. The player's own knockback is untouched, so the player is still thrown back from the collision; only the enemy side is suppressed.
+
+That covers the two scripted impulses, but not the physics engine quietly nudging the boss when the player presses into it. So `AmygdalaBoss.Start` also sets the rigidbody constraints to `FreezeAll`, locking its position (and rotation) entirely. The boss is stationary by design anyway — `moveSpeed` is zero — so freezing position costs nothing and makes it truly immovable. The flag is a general `Enemy` feature now, so any future boss or heavy enemy can opt in from the inspector without freezing position if it still needs to move.
+
+---
+
+## 09.07.2026 — Sound Effects
+
+Added sound effects for seven events: player attack, player taking damage, player death, enemy death, healing-item pickup, item-room-item pickup, and menu button clicks. Rather than scatter `AudioSource` components around, this went through a single `SoundManager` singleton, mirroring the `MusicManager` from a week earlier — one shared `AudioSource`, one serialized `AudioClip` field per event, and a small convenience method per clip. It persists across the session via `DontDestroyOnLoad`, and, like the music, deliberately doesn't touch `AudioListener.volume` so the existing mute button silences it for free.
+
+The `Play` method is null-safe: calling it with an unassigned clip is a no-op, so effects can be wired up incrementally without null checks at every call site, and a missing clip just means silence rather than an error. One-shots via `PlayOneShot` are also unaffected by `Time.timeScale`, which matters because the player-death sound fires exactly when the death sequence freezes the game to zero timescale — it still plays.
+
+The trigger points were mostly one-liners at the natural spots: `PlayerMovement.Attack`, `TakeDamage` (guarded so the hurt sound only plays if the hit wasn't fatal — the death sound covers that case, avoiding a doubled sound), and `Die`; `HealItem` and the `Item` base class on pickup (the base covers both the max-health item and the Onion). The player hurt sound also sits behind the invulnerability check, so i-frame contacts are silent, matching the screen shake.
+
+The enemy sound was initially a death sound in `Enemy.Die`, but was changed to an enemy *hurt* sound instead — enemies don't get a separate death sound, they just make the same pained noise on every hit, including the killing blow. The call moved into `Enemy.TakeDamage`, placed before the health-zero check so it still fires on the fatal hit. Because `AmygdalaBoss` overrides `TakeDamage` and calls `base.TakeDamage`, the boss gets the hurt sound on every hit for free.
+
+Menu clicks were handled differently since there are many buttons. A `ButtonClickSound` component wires the click sound through the Button's own `onClick` event. It is flexible about placement: dropped on a Button it wires that one, but dropped on a parent Canvas it finds every child Button — including inactive ones via `GetComponentsInChildren(true)` — and wires them all, so an entire menu is covered by one component instead of one per button.
+
+---
+
+## 10.07.2026 — Freeze Frame on Hit
+
+Added a hit-stop (freeze-frame) effect so landing a melee hit has a satisfying punch: the game briefly freezes on impact, then resumes. It's the classic game-feel trick — a few frames of stopped time reads as weight behind the blow.
+
+The `HitStop` singleton exposes two inspector fields: `duration` (how long the freeze lasts, in real seconds — default a very short 0.06s) and `timeScaleDuringFreeze` (the time scale to hold during it, 0 for a full stop or a small value like 0.1 for slow-motion instead). On `Freeze()` it sets `Time.timeScale` to the freeze value and waits with `WaitForSecondsRealtime` — real time, so the timer actually elapses while scaled time is stopped — then sets the scale back to 1.
+
+The care here is that the game already owns `Time.timeScale` in several places: pause sets it to 0, and death and the win screen freeze it too. A naive hit-stop that blindly restores the scale to 1 after its wait could un-pause the game or un-freeze the death screen if one of those happened during the tiny freeze window. So both the entry point and the restore are guarded by an `IsGameHalted` check against the `GameManager` flags (`IsGameRunning`, `IsPaused`, `IsPlayerDead`): the freeze refuses to start if the game is already halted, and after the wait it only returns to normal time if nothing else has taken control in the meantime. Re-triggering restarts the single coroutine rather than stacking, so rapid hits don't compound the freeze.
+
+It's triggered from `PlayerMovement.Attack`, but only when the swing actually connects — the call is gated on `enemyHits.Count > 0`, so whiffing into empty air doesn't stutter the game. Only the melee triggers it for now; the Onion's auto-fire deliberately doesn't, since a freeze on every automatic shot would be constant and nauseating.
+
+---
+
+## 11.07.2026 — Dead Code Sweep
+
+Did a pass over the scripts looking for unused code. The recently added systems (the boss, the items, the audio and juice effects) were clean — no orphaned fields, methods, or leftover members from the various refactors. The only thing found was a stray `Debug.Log(AudioListener.volume)` in `MuteButton.ToggleMute`, a debugging leftover from when the mute toggle was first wired up. Removed it. The `LogWarning` calls in `LeaderboardManager` were left alone — those are genuine error reporting for failed network requests, not debug cruft.
+
+---
+
+## 12.07.2026 — Script Folder Organisation
+
+The `Scripts` folder had grown to 44 flat files, which was getting hard to navigate. Grouped them into nine category subfolders: Core (GameManager, InputManager, CameraAspect), Player, Enemies, Items, Level (generation, rooms, doors, minimap, transitions), UI, Leaderboard (the Firebase and leaderboard screens), Audio, and Effects (camera shake, hit-stop, death smoke, bob, the lightning cone). Leaderboard-specific UI screens went with the leaderboard group rather than the general UI folder, to keep that feature's code together.
+
+The one thing to be careful about in Unity is that every script has a companion `.meta` file holding the GUID that scenes and prefabs use to reference the component — moving a `.cs` without its `.meta` would regenerate the GUID and silently break every reference to that script. So each file was moved as a `.cs` + `.cs.meta` pair. Because none of the scripts declare a namespace and Unity compiles everything into the default assembly regardless of folder, the moves needed no code changes at all — no `using` updates, no reference fixes. Purely an editor-side reorganisation.
+
+---
+
+## 13.07.2026 — Lightning Cone Hit-Detection Fix
+
+Hits from the melee lightning cone were feeling unreliable — enemies that clearly overlapped the cone sometimes took no damage. Tracing through the attack code, the cause was an inconsistency in how the three stages of hit detection treated the enemy. The initial range check (an overlap circle) is collider-aware, and the per-bolt damage count compares against the enemy's collider radius, but the middle stage — the cone-angle test that decides whether an enemy is even a candidate — was measuring purely to the enemy's centre point. So a large enemy (or the boss) whose body overlapped the cone but whose centre sat just outside the cone's edge was thrown out before the collider-aware stages ever ran. That read in-game as a clear hit doing nothing.
+
+The fix widens the cone-angle test by the enemy's angular size. For each enemy it computes the half-angle the enemy subtends at its distance — asin(radius / distance) — and only rejects the enemy if it's outside the cone even after allowing for that. Now an enemy that's only partly inside the cone still qualifies, which lines the cone test up with the range and bolt-count stages. The bolt count itself was left as-is: it already used the collider radius, so once an enemy passes the widened gate the damage still scales correctly with how many bolts actually pass through its body.

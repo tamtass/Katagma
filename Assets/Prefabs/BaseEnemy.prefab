@@ -145,6 +145,7 @@ MonoBehaviour:
   scoreValue: 10
   knockbackForce: 3
   knockbackDuration: 0.2
+  knockbackImmune: 0
   spawnStunDuration: 0.6
   frames:
   - {fileID: -6704371230968284964, guid: 6b03ea87944d6f84eb3158c6024def9b, type: 3}
@@ -152,7 +153,7 @@ MonoBehaviour:
   frameFrequency: 8
   scaleFrequency: 2
   scaleAmplitude: 0.08
-  dropChance: 1
+  dropChance: 0.1
   itemDropPool:
   - {fileID: 4985415875749173232, guid: 9801708e2897bdf4dafcd0781c93a023, type: 3}
   deathEffectPrefab: {fileID: 5318326626791863775, guid: 4a4f37876c5b51345ab69f1096f287a9, type: 3}

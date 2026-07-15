@@ -55,6 +55,9 @@ MonoBehaviour:
   material: {fileID: 0}
   sortingLayerName: Player
   sortingOrder: -1
+  outline: 1
+  outlineWidth: 0.03
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &2197132753255317095
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,13 +445,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd43356f1473e0c46bf958a9524a0324, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  maxHealth: 50
-  health: 50
+  maxHealth: 100
+  health: 100
   movementSpeed: 5
-  attackSpeed: 2
-  damage: 100
-  attackRange: 3
+  attackSpeed: 1.5
+  damage: 10
+  attackRange: 4
   projectileCount: 3
+  upgradePercent: 0.2
   spriteRenderer: {fileID: 4345495092549718667}
   frontSprite: {fileID: 2099384810065395903, guid: 21347e525512acd4c8a8c4aecb48e2f5, type: 3}
   backSprite: {fileID: 1911844830866190439, guid: 21347e525512acd4c8a8c4aecb48e2f5, type: 3}

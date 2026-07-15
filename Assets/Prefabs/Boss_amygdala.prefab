@@ -101,8 +101,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2549549958174129954}
   - component: {fileID: 6082616304585491368}
-  - component: {fileID: 870012135822972208}
   - component: {fileID: 5800904860104043780}
+  - component: {fileID: 5784988224720358440}
   m_Layer: 15
   m_Name: Boss_amygdala
   m_TagString: Enemy
@@ -153,8 +153,51 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &870012135822972208
-CircleCollider2D:
+--- !u!114 &5800904860104043780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9183751629112550458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 793863428ad121645bf621ec0abe911b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AmygdalaBoss
+  health: 800
+  damage: 10
+  moveSpeed: 3
+  spawnWeight: 1
+  scoreValue: 200
+  knockbackForce: 5
+  knockbackDuration: 0.5
+  knockbackImmune: 0
+  spawnStunDuration: 0.6
+  frames:
+  - {fileID: -1348367012624230436, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
+  - {fileID: -8018423963371162987, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
+  frameFrequency: 8
+  scaleFrequency: 1
+  scaleAmplitude: 0.034
+  dropChance: 0.1
+  itemDropPool: []
+  deathEffectPrefab: {fileID: 5318326626791863775, guid: 4a4f37876c5b51345ab69f1096f287a9, type: 3}
+  phaseTwoThreshold: 0.5
+  telegraphDuration: 0.5
+  telegraphSprite: {fileID: -3351716696087122625, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
+  panicTelegraphDuration: 1
+  panicSprite: {fileID: -3351716696087122625, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
+  projectilePrefab: {fileID: 376354835547560908, guid: 5fcd8ca7c491d054786d5d37209965fb, type: 3}
+  projectileDamage: 10
+  radialCount: 12
+  radialBurstInterval: 2
+  radialAngleOffset: 0
+  spiralArms: 3
+  spiralFireInterval: 0.3
+  spiralRotationSpeed: 75
+--- !u!60 &5784988224720358440
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -188,46 +231,34 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 1.44
---- !u!114 &5800904860104043780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9183751629112550458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 793863428ad121645bf621ec0abe911b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AmygdalaBoss
-  health: 800
-  damage: 10
-  moveSpeed: 3
-  spawnWeight: 1
-  scoreValue: 200
-  knockbackForce: 5
-  knockbackDuration: 0.5
-  spawnStunDuration: 0.6
-  frames:
-  - {fileID: -1348367012624230436, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
-  - {fileID: -8018423963371162987, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
-  frameFrequency: 8
-  scaleFrequency: 1
-  scaleAmplitude: 0.034
-  dropChance: 0.25
-  itemDropPool: []
-  deathEffectPrefab: {fileID: 5318326626791863775, guid: 4a4f37876c5b51345ab69f1096f287a9, type: 3}
-  phaseTwoThreshold: 0.5
-  telegraphDuration: 0.5
-  telegraphSprite: {fileID: -3351716696087122625, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
-  panicTelegraphDuration: 1
-  panicSprite: {fileID: -3351716696087122625, guid: 630188f67f2b9464792a97ab0415bebc, type: 3}
-  projectilePrefab: {fileID: 376354835547560908, guid: 5fcd8ca7c491d054786d5d37209965fb, type: 3}
-  projectileDamage: 10
-  radialCount: 12
-  radialBurstInterval: 2
-  radialAngleOffset: 0
-  spiralArms: 3
-  spiralFireInterval: 0.3
-  spiralRotationSpeed: 75
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.62284946, y: 1.2567409}
+      - {x: 0.17438698, y: 1.3398314}
+      - {x: -0.29002953, y: 1.3484389}
+      - {x: -0.74625397, y: 1.209253}
+      - {x: -1.1374922, y: 1.0334599}
+      - {x: -1.4595289, y: 0.7481161}
+      - {x: -1.7022629, y: 0.21958753}
+      - {x: -1.8574944, y: -0.34873465}
+      - {x: -1.7458143, y: -0.83860356}
+      - {x: -1.2313919, y: -1.1131195}
+      - {x: -0.7353434, y: -1.2561637}
+      - {x: -0.25242996, y: -1.2944282}
+      - {x: 0.3601427, y: -1.2905915}
+      - {x: 1.1154181, y: -1.1890914}
+      - {x: 1.750534, y: -0.8217618}
+      - {x: 1.9056005, y: -0.53799963}
+      - {x: 1.8491526, y: -0.09366855}
+      - {x: 1.5947704, y: 0.52124447}
+      - {x: 1.2327585, y: 0.99315137}
+  m_UseDelaunayMesh: 1

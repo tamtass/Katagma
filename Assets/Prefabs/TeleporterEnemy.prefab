@@ -208,6 +208,7 @@ MonoBehaviour:
   scoreValue: 20
   knockbackForce: 5
   knockbackDuration: 0.5
+  knockbackImmune: 0
   spawnStunDuration: 0.6
   frames:
   - {fileID: 1814038682954353972, guid: 15951ec0947d1894c9f91341f4225553, type: 3}
@@ -215,13 +216,14 @@ MonoBehaviour:
   frameFrequency: 8
   scaleFrequency: 2
   scaleAmplitude: 0.08
-  dropChance: 0.25
-  itemDropPool: []
+  dropChance: 0.1
+  itemDropPool:
+  - {fileID: 4985415875749173232, guid: 9801708e2897bdf4dafcd0781c93a023, type: 3}
   deathEffectPrefab: {fileID: 5318326626791863775, guid: 4a4f37876c5b51345ab69f1096f287a9, type: 3}
   projectilePrefab: {fileID: 376354835547560908, guid: 5fcd8ca7c491d054786d5d37209965fb, type: 3}
   windupDuration: 0.1
-  postShotPause: 0.6
-  postTeleportPause: 0.4
+  postShotPause: 1
+  postTeleportPause: 1
   teleportHalfTime: 0.15
   minPlayerDistance: 3
   maxTeleportAttempts: 20

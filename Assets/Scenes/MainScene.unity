@@ -383,6 +383,7 @@ GameObject:
   - component: {fileID: 35801135}
   - component: {fileID: 35801134}
   - component: {fileID: 35801133}
+  - component: {fileID: 35801136}
   m_Layer: 0
   m_Name: GameOver_canvas
   m_TagString: Untagged
@@ -481,6 +482,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &35801136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35801131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60d2596a2269144d8197e0c3d128180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &39724077
 GameObject:
   m_ObjectHideFlags: 0
@@ -1554,6 +1567,7 @@ GameObject:
   - component: {fileID: 223495626}
   - component: {fileID: 223495625}
   - component: {fileID: 223495624}
+  - component: {fileID: 223495627}
   m_Layer: 0
   m_Name: PauseMenu_canvas
   m_TagString: Untagged
@@ -1646,6 +1660,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &223495627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223495622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60d2596a2269144d8197e0c3d128180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &223984367
 GameObject:
   m_ObjectHideFlags: 0
@@ -2884,6 +2910,8 @@ GameObject:
   - component: {fileID: 434584807}
   - component: {fileID: 434584810}
   - component: {fileID: 434584811}
+  - component: {fileID: 434584812}
+  - component: {fileID: 434584813}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3023,6 +3051,58 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   targetAspectWidth: 16
   targetAspectHeight: 9
+--- !u!114 &434584812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434584806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18934b64fbc29f644ba9e572e38566e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShake
+  duration: 0.25
+  magnitude: 0.15
+  falloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: -1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &434584813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434584806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb4da0900b0cf2a47b38dd98ce48c363, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitStop
+  duration: 0.04
+  timeScaleDuringFreeze: 0
 --- !u!1 &456231866
 GameObject:
   m_ObjectHideFlags: 0
@@ -6202,7 +6282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b676bfc71f08340ba70a9b50abf3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGenerator
-  targetRoomCount: 5
+  targetRoomCount: 15
   maxItemRooms: 1
   maxNewRoomNeighbors: 1
   floors:
@@ -7183,8 +7263,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1198621243}
   - component: {fileID: 1198621244}
+  - component: {fileID: 1198621245}
   m_Layer: 0
-  m_Name: MusicManager
+  m_Name: SoundManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7221,6 +7302,26 @@ MonoBehaviour:
   gameplayTrack: {fileID: 8300000, guid: e05cdbf1ebfd31743a09b46e9db20259, type: 3}
   volume: 0.5
   fadeDuration: 1
+--- !u!114 &1198621245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198621242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7871cd750d6a01c48927c538de6abc88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundManager
+  playerAttack: {fileID: 8300000, guid: 75c86808d51ae314487fd3c274ac9377, type: 3}
+  playerHurt: {fileID: 8300000, guid: 4424d0c863644c643a7a23d5c3dc037f, type: 3}
+  playerDeath: {fileID: 8300000, guid: 1f8e29dc76c594a498d9fa5a15ae3f69, type: 3}
+  enemyHurt: {fileID: 8300000, guid: 69c2cadca1aa4bd4cbc98cfafe2398e3, type: 3}
+  healPickup: {fileID: 8300000, guid: 73465fe958e3d8849862995832a18939, type: 3}
+  itemPickup: {fileID: 8300000, guid: c65990b6026fb4644bb2188c37791897, type: 3}
+  buttonClick: {fileID: 8300000, guid: fe94b1bc54c66a54685256c15515fa15, type: 3}
+  volume: 0.15
 --- !u!1 &1216820602
 GameObject:
   m_ObjectHideFlags: 0
@@ -9264,6 +9365,7 @@ GameObject:
   - component: {fileID: 1709630619}
   - component: {fileID: 1709630618}
   - component: {fileID: 1709630617}
+  - component: {fileID: 1709630620}
   m_Layer: 0
   m_Name: MetaProgression_canvas
   m_TagString: Untagged
@@ -9360,6 +9462,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 10
   m_TargetDisplay: 0
+--- !u!114 &1709630620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709630615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60d2596a2269144d8197e0c3d128180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &1709959492
 GameObject:
   m_ObjectHideFlags: 0
@@ -11097,6 +11211,7 @@ GameObject:
   - component: {fileID: 1891603666}
   - component: {fileID: 1891603665}
   - component: {fileID: 1891603664}
+  - component: {fileID: 1891603667}
   m_Layer: 0
   m_Name: Leaderboard_canvas
   m_TagString: Untagged
@@ -11191,6 +11306,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 15
   m_TargetDisplay: 0
+--- !u!114 &1891603667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891603662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60d2596a2269144d8197e0c3d128180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &1912665218
 GameObject:
   m_ObjectHideFlags: 0
@@ -11885,6 +12012,7 @@ GameObject:
   - component: {fileID: 1931843244}
   - component: {fileID: 1931843243}
   - component: {fileID: 1931843242}
+  - component: {fileID: 1931843245}
   m_Layer: 0
   m_Name: OptionsMenu_canvas
   m_TagString: Untagged
@@ -11978,6 +12106,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 15
   m_TargetDisplay: 0
+--- !u!114 &1931843245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931843240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60d2596a2269144d8197e0c3d128180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1 &1934738958
 GameObject:
   m_ObjectHideFlags: 0
@@ -13122,6 +13262,7 @@ GameObject:
   - component: {fileID: 2126313296}
   - component: {fileID: 2126313295}
   - component: {fileID: 2126313294}
+  - component: {fileID: 2126313297}
   m_Layer: 0
   m_Name: MainMenu_canvas
   m_TagString: Untagged
@@ -13214,6 +13355,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 15
   m_TargetDisplay: 0
+--- !u!114 &2126313297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2126313292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d60d2596a2269144d8197e0c3d128180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonClickSound
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 5566153456467741822}
   - component: {fileID: 8706194267108778047}
   - component: {fileID: 5049505873345668886}
-  - component: {fileID: 3436072138960911665}
+  - component: {fileID: 5913793297069242198}
   m_Layer: 15
   m_Name: SlowEnemy
   m_TagString: Enemy
@@ -145,12 +145,13 @@ MonoBehaviour:
   scoreValue: 30
   knockbackForce: 3
   knockbackDuration: 0.2
+  knockbackImmune: 0
   spawnStunDuration: 0.6
   frames:
   - {fileID: -2830499052233945671, guid: b0ced312a82c1084b8297245ae0a0af2, type: 3}
   - {fileID: 4328343157147161019, guid: b0ced312a82c1084b8297245ae0a0af2, type: 3}
-  frameFrequency: 8
-  scaleFrequency: 1
+  frameFrequency: 4
+  scaleFrequency: 2
   scaleAmplitude: 0.044
   dropChance: 1
   itemDropPool:
@@ -183,8 +184,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &3436072138960911665
-CircleCollider2D:
+--- !u!60 &5913793297069242198
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -218,4 +219,28 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 1
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.72265625, y: 0.898407}
+      - {x: -0.006958008, y: 0.9550171}
+      - {x: -0.37835693, y: 0.93759155}
+      - {x: -0.7949219, y: 0.66397095}
+      - {x: -1.1413641, y: 0.3851278}
+      - {x: -1.3765869, y: -0.0234375}
+      - {x: -1.4368286, y: -0.46038818}
+      - {x: -1.1087036, y: -0.7269287}
+      - {x: -0.5877852, y: -0.8989829}
+      - {x: 0.19824219, y: -0.97076416}
+      - {x: 1.1482102, y: -0.80553794}
+      - {x: 1.4629517, y: -0.36270142}
+      - {x: 1.186286, y: 0.3678245}
+  m_UseDelaunayMesh: 1
