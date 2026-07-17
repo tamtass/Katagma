@@ -1,41 +1,49 @@
 using UnityEngine;
 
+// The visual for the player's melee attack: a fan of jagged lightning bolts drawn across the
+// attack cone. Each bolt is a LineRenderer whose points are randomly displaced to look electric,
+// and re-randomised a few times over the effect's short lifetime so it flickers. Each bolt also
+// gets a thicker black outline drawn just beneath it. This is purely cosmetic — the actual hit
+// detection lives in PlayerMovement.
 public class LightningConeEffect : MonoBehaviour
 {
     [Header("Cone")]
-    public float coneAngle = 45f;
+    public float coneAngle = 45f;   // total spread of the fan, in degrees (set by the player each attack)
 
     [Header("Bolt Shape")]
-    public int segments = 12;
-    public float displacement = 0.25f;
+    public int segments = 12;          // line segments per bolt; more = more jagged detail
+    public float displacement = 0.25f; // how far the mid-points can wander sideways
 
     [Header("Timing")]
-    public float flickerRate = 0.04f;
-    public float duration = 0.12f;
+    public float flickerRate = 0.04f;  // how often the bolts re-randomise
+    public float duration = 0.12f;     // how long the whole effect stays on screen
 
     [Header("Visuals")]
-    public float startWidth = 0.06f;
-    public float endWidth = 0.01f;
+    public float startWidth = 0.06f;   // bolt width at the player end
+    public float endWidth = 0.01f;     // bolt width at the tip (tapers to a point)
     public Color color = Color.cyan;
-    public Material material;
+    public Material material;           // optional; falls back to a default sprite material
     public string sortingLayerName = "Default";
     public int sortingOrder = 10;
 
     [Header("Outline")]
     public bool  outline      = true;
-    public float outlineWidth = 0.03f;         // extra width added to each side
+    public float outlineWidth = 0.03f;         // extra width added to each side of the bolt
     public Color outlineColor = Color.black;
 
-    private LineRenderer[] bolts;
-    private LineRenderer[] boltOutlines;        // thicker black lines drawn under each bolt
-    private Vector3[] directions;
-    private Vector3 origin;
-    private float range;
-    private float flickerTimer;
-    private float durationTimer;
+    private LineRenderer[] bolts;         // one line per bolt
+    private LineRenderer[] boltOutlines;  // matching thicker black line under each bolt
+    private Vector3[] directions;         // direction each bolt points
+    private Vector3 origin;               // where the bolts start (the player)
+    private float range;                  // bolt length
+    private float flickerTimer;           // counts down to the next re-randomise
+    private float durationTimer;          // counts down to the effect ending
     private bool active;
-    private int activeBoltCount;
+    private int activeBoltCount;          // how many bolts currently exist
 
+    // Rebuilds the pool of line renderers for a given bolt count (only when the count changes,
+    // e.g. the player's projectile count went up). Destroys the old ones and creates a bolt plus
+    // its outline for each.
     void RebuildBolts(int count)
     {
         if (bolts != null)
@@ -52,7 +60,7 @@ public class LightningConeEffect : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            // Outline first, one order below, thicker and black — sits under the bolt.
+            // Outline first, thicker, black, one sorting order below so it sits under the bolt.
             boltOutlines[i] = CreateLine("BoltOutline",
                 outlineColor, new Color(outlineColor.r, outlineColor.g, outlineColor.b, 0f),
                 startWidth + outlineWidth * 2f, endWidth + outlineWidth * 2f,
@@ -64,6 +72,8 @@ public class LightningConeEffect : MonoBehaviour
         }
     }
 
+    // Creates one configured LineRenderer (used for both bolts and their outlines). The end colour
+    // fades to transparent so the tip tapers out cleanly rather than ending in a hard blob.
     private LineRenderer CreateLine(string name, Color start, Color end, float wStart, float wEnd, int order)
     {
         var go = new GameObject(name);
@@ -79,12 +89,14 @@ public class LightningConeEffect : MonoBehaviour
         lr.material         = material != null ? material : new Material(Shader.Find("Sprites/Default"));
         lr.sortingLayerName = sortingLayerName;
         lr.sortingOrder     = order;
-        lr.enabled          = false;
+        lr.enabled          = false;   // hidden until Play turns it on
 
         return lr;
     }
 
-    // count = projectileCount from PlayerMovement
+    // Fires the effect. Called by PlayerMovement each attack with where it starts, which way it
+    // faces, how long the bolts are, and how many there are. Spreads the bolts evenly across the
+    // cone, enables them, and generates their first shape. Also starts the lifetime/flicker timers.
     public void Play(Vector3 worldOrigin, float facingDegrees, float attackRange, int count)
     {
         if (count != activeBoltCount)
@@ -97,7 +109,7 @@ public class LightningConeEffect : MonoBehaviour
         for (int i = 0; i < activeBoltCount; i++)
         {
             float t     = activeBoltCount > 1 ? (float)i / (activeBoltCount - 1) : 0.5f;
-            float angle = facingDegrees + Mathf.Lerp(-half, half, t);
+            float angle = facingDegrees + Mathf.Lerp(-half, half, t);   // spread across the cone
             float rad   = angle * Mathf.Deg2Rad;
             directions[i] = new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0f);
             bolts[i].enabled = true;
@@ -110,6 +122,8 @@ public class LightningConeEffect : MonoBehaviour
         flickerTimer  = flickerRate;
     }
 
+    // Counts the effect down. When the lifetime ends it hides every line; otherwise it re-randomises
+    // the bolt shapes on the flicker interval (following the player's position) for a lively look.
     void Update()
     {
         if (!active) return;
@@ -132,13 +146,16 @@ public class LightningConeEffect : MonoBehaviour
         }
     }
 
+    // Builds the jagged shape of every bolt: a straight line from origin to tip, with each
+    // in-between point pushed sideways by a random amount. The displacement is largest in the
+    // middle and tapers to zero at both ends, so the bolts stay pinned at the player and the tip.
     void Regenerate()
     {
         for (int i = 0; i < activeBoltCount; i++)
         {
             Vector3 dir  = directions[i];
             Vector3 end  = origin + dir * range;
-            Vector3 perp = new Vector3(-dir.y, dir.x, 0f);
+            Vector3 perp = new Vector3(-dir.y, dir.x, 0f);   // sideways direction for the displacement
 
             SetPoint(i, 0, origin);
             SetPoint(i, segments, end);
@@ -147,14 +164,15 @@ public class LightningConeEffect : MonoBehaviour
             {
                 float   t           = (float)j / segments;
                 Vector3 point       = Vector3.Lerp(origin, end, t);
-                float   maxDisplace = displacement * (1f - Mathf.Abs(t - 0.5f) * 2f);
+                float   maxDisplace = displacement * (1f - Mathf.Abs(t - 0.5f) * 2f);   // 0 at ends, max at middle
                 point += perp * Random.Range(-maxDisplace, maxDisplace);
                 SetPoint(i, j, point);
             }
         }
     }
 
-    // Writes a point to both the bolt and its outline so they trace the same jagged path.
+    // Writes a point to both a bolt and its outline, so the outline always traces the identical
+    // jagged path underneath.
     private void SetPoint(int i, int index, Vector3 p)
     {
         bolts[i].SetPosition(index, p);

@@ -189,8 +189,10 @@ public class PlayerMovement : MonoBehaviour
             GameManager.Instance.ShowGameOver(false);
     }
 
-    // Reads movement input every frame and, unless paused, updates facing, attacking, and
-    // the invulnerability flicker. Movement itself is applied in FixedUpdate (physics).
+    // Reads movement input every frame and updates facing, attacking, and the invulnerability
+    // flicker. Facing/attacking are also skipped when the player can't act — paused, or
+    // canMove is false during a transition/pickup/death — so they can't aim or shoot while the
+    // screen is fading out or otherwise locked. Movement itself is applied in FixedUpdate.
     void Update()
     {
         moveInput = Keyboard.current != null
@@ -204,7 +206,7 @@ public class PlayerMovement : MonoBehaviour
         moveInput = moveInput.normalized;   // so diagonals aren't faster than straight lines
 
         bool paused = GameManager.Instance != null && GameManager.Instance.IsPaused;
-        if (!paused)
+        if (!paused && canMove)
         {
             FaceCursor();
             HandleAttack();

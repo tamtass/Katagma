@@ -1,22 +1,44 @@
 using UnityEngine;
 
-// Forces the camera to keep a fixed aspect ratio (16:9 by default) no matter what
-// shape the window is. If the window doesn't match, it letterboxes/pillarboxes with
-// black bars instead of stretching the game. Put this on the main camera.
+// Forces the camera to keep a fixed aspect ratio (16:9 by default) no matter what shape the
+// window is. If the window doesn't match, it letterboxes/pillarboxes with black bars instead of
+// stretching the game. It re-applies whenever the window size changes, so resizing the window
+// (or any non-16:9 resolution) keeps the game fitting correctly. Put this on the main camera.
+[RequireComponent(typeof(Camera))]
 public class CameraAspect : MonoBehaviour
 {
     public float targetAspectWidth = 16f;    // the "16" in 16:9
     public float targetAspectHeight = 9f;    // the "9" in 16:9
 
-    // Runs once at load. Compares the window's real aspect to the target and shrinks
-    // the camera's viewport rect so the visible area always keeps the target ratio.
+    private Camera cam;
+    private int lastWidth;    // window size the current letterbox was computed for,
+    private int lastHeight;   // so we only recompute when it actually changes
+
+    // Cache the camera and apply the letterbox once at startup.
     void Awake()
     {
+        cam = GetComponent<Camera>();
+        Apply();
+    }
+
+    // Re-apply whenever the window dimensions change (a resize, or a resolution switch). Without
+    // this the viewport was computed only once and went stale as soon as the window changed shape.
+    void Update()
+    {
+        if (Screen.width != lastWidth || Screen.height != lastHeight)
+            Apply();
+    }
+
+    // Compares the window's real aspect to the target and shrinks the camera's viewport rect so
+    // the visible area always keeps the target ratio, adding black bars on the leftover space.
+    private void Apply()
+    {
+        lastWidth  = Screen.width;
+        lastHeight = Screen.height;
+
         float targetAspect = targetAspectWidth / targetAspectHeight;
         float windowAspect = (float)Screen.width / Screen.height;
         float scaleHeight = windowAspect / targetAspect;   // <1 means window is too tall, >1 too wide
-
-        Camera cam = GetComponent<Camera>();
 
         if (scaleHeight < 1.0f)
         {

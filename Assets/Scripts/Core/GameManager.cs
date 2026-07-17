@@ -301,10 +301,12 @@ public class GameManager : MonoBehaviour
     }
 
     // Leaves the current run and heads back to the menu, fading through black so the
-    // teardown is hidden.
+    // teardown is hidden. Locks the player immediately so they can't aim or shoot during the
+    // fade (unpausing clears IsPaused before the cleanup actually destroys the player).
     public void ReturnToMainMenu()
     {
         IsPaused = false;
+        if (_playerInstance != null) _playerInstance.canMove = false;
 
         if (TransitionScreen.Instance != null)
             TransitionScreen.Instance.Transition(0.5f, 1f,
