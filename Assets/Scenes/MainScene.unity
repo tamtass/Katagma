@@ -6282,7 +6282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b676bfc71f08340ba70a9b50abf3a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorGenerator
-  targetRoomCount: 15
+  targetRoomCount: 10
   maxItemRooms: 1
   maxNewRoomNeighbors: 1
   floors:
@@ -10424,6 +10424,7 @@ MonoBehaviour:
   floorGenerator: {fileID: 997029687}
   itemPrefabs:
   - {fileID: 4985415875749173232, guid: 574db175c55af7f47901a523793452ec, type: 3}
+  - {fileID: 4985415875749173232, guid: 865fad13757d2dd47a905d947e1b6bda, type: 3}
   gameOverScreen: {fileID: 917090214}
   storyProgressionScreen: {fileID: 318750631}
   optionsMenuUI: {fileID: 1305675098}
